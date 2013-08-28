@@ -29,12 +29,12 @@ GLuint vao;
 GLuint vbo;
 GLuint ebo;
 
+GLunit randomchange;
+
 const unsigned int textureNumber = 2;	
 GLuint texturesArray[textureNumber];
 
 std::string textureFileNames[textureNumber] = { "sample.png", "sample2.png" }; 
-
-glm::mat4 model;
 
 GLuint elements[] = {
 	0, 1, 2, 
@@ -222,39 +222,43 @@ void init()
 
 void Draw(GLuint shaderProgram, GLint uniTrans)
 {
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	
-		glClear( GL_COLOR_BUFFER_BIT );
+	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	
+	glClear( GL_COLOR_BUFFER_BIT );
 			
-		//glUseProgram( shaderProgram );
-		//checkErrors("glUseProgram()");	
-		//glBindBuffer( GL_ARRAY_BUFFER, vbo );
+	//glUseProgram( shaderProgram );
+	//checkErrors("glUseProgram()");	
+	//glBindBuffer( GL_ARRAY_BUFFER, vbo );
 		
-		// Linking vertex data and attributes
-		glEnableVertexAttribArray( 0 );	
-		checkErrors("glEnableVertexAttribArray( index = 0 )");
-		glEnableVertexAttribArray( 1 );
-		checkErrors("glEnableVertexAttribArray( index = 1 )");
-		glEnableVertexAttribArray( 2 );
-		checkErrors("glEnableVertexAttribArray( index = 2 )");
+	// Linking vertex data and attributes
+	glEnableVertexAttribArray( 0 );	
+	checkErrors("glEnableVertexAttribArray( index = 0 )");
+	glEnableVertexAttribArray( 1 );
+	checkErrors("glEnableVertexAttribArray( index = 1 )");
+	glEnableVertexAttribArray( 2 );
+	checkErrors("glEnableVertexAttribArray( index = 2 )");
 
-		glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 7*sizeof(float), 0 );
-		checkErrors("glVertexAttribPointer( index = 0 )");
-		glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)( 2*sizeof(float) ) );
-		checkErrors("glVertexAttribPointer( index = 1 )");
-		glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)( 5*sizeof(float) ) );
-		checkErrors("glVertexAttribPointer( index = 2 )");
-		
-		model = glm::rotate( model, ( (float)clock() / (float)CLOCKS_PER_SEC * 180.0f ) / 5, glm::vec3( 0.0, 0.0f, 1.0f ) ); 
-
-		glUniformMatrix4fv( uniTrans, 1, GL_FALSE, glm::value_ptr( model ) );
-		checkErrors( "glUnifromMatrix4fv()" );
-
-		//glDrawArrays( GL_TRIANGLES, 0, 6 );	
-		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-		checkErrors( "glDrawElements()" );
+	glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 7*sizeof(float), 0 );
+	checkErrors("glVertexAttribPointer( index = 0 )");
+	glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)( 2*sizeof(float) ) );
+	checkErrors("glVertexAttribPointer( index = 1 )");
+	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)( 5*sizeof(float) ) );
+	checkErrors("glVertexAttribPointer( index = 2 )");
 	
-		glDisableVertexAttribArray( 0 );
-		//glUseProgram( 0 );		
+	glm::mat4 model;		
+	
+	model = glm::rotate( model, ( (float)clock() / (float)CLOCKS_PER_SEC * 180.0f ) / 5, glm::vec3( 0.0, 0.0f, 1.0f ) ); 
+
+	//float s = sin( (float)clock() / (float)CLOCKS_PER_SEC * 5.0f ) * 0.25f + 0.75f;
+	//model = glm::scale( model, glm::vec3( s, s, s ) );
+
+	glUniformMatrix4fv( uniTrans, 1, GL_FALSE, glm::value_ptr( model ) );
+	checkErrors( "glUnifromMatrix4fv()" );
+
+	//glDrawArrays( GL_TRIANGLES, 0, 6 );	
+	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );		checkErrors( "glDrawElements()" );
+
+	glDisableVertexAttribArray( 0 );
+	//glUseProgram( 0 );		
 }
 
 int main( int argc, char *argv[] )
