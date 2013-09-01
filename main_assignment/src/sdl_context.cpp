@@ -1,25 +1,19 @@
-#include <string>
-#include <stdexcept>
-#include <memory>
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_opengl.h"
-
+#include "../core.h"
 #include "../sdl_context.h"
 
 
-std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> SDL_Context::mWindow = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>(nullptr, SDL_DestroyWindow);
+std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> SDL_CONTEXT::mWindow = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>(nullptr, SDL_DestroyWindow);
 
 /*std::unique_ptr<SDL_GLContext, void (*)(SDL_GLContext)> SDL_Context::mglContext = std::unique_ptr<SDL_GLContext, void (*)(SDL_GLContext)>(nullptr, SDL_GL_DeleteContext);
 */
 
-SDL_GLContext SDL_Context::mglContext; 
+SDL_Rect SDL_CONTEXT::mBox;
 
-SDL_Rect SDL_Context::mBox;
+SDL_Event SDL_CONTEXT::windowEvent;
 
 
-void SDL_Context::Init( std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT )
+SDL_GLContext SDL_CONTEXT::Init( std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT )
 {
 	if( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
 		throw std::runtime_error("[DEBUG] SDL Init Failed");
@@ -35,10 +29,34 @@ void SDL_Context::Init( std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT )
 		throw std::runtime_error("[DEBUG] Failed to Create Window");
 
 	
-	SDL_Context::mglContext = SDL_GL_CreateContext(mWindow.get());	
+	return SDL_CONTEXT::mglContext = SDL_GL_CreateContext(mWindow.get());	
 }
 
-void SDL_Context::Quit()
+CORE::WindowEvent SDL_CONTEXT::ProcessInput()
+{
+		CORE::WindowEvent winEvent = NOEVENT;
+		
+		if( SDL_PollEvent( &SDL_CONTEXT::windowEvent ) )
+		{
+			switch(SDL::windowEvent.type)
+			{
+				case SDL_QUIT:
+					winEvent = ESC;
+					break;
+				case ( SDL_CONTEXT::windowEvent.type 	       == SDL_KEYUP && 
+				       SDL_CONTEXT::windowEvent.key.keysym.sym == SDLK_ESCAPE 
+				     ):
+					winEvent = ESC;
+					break;
+				default:
+					winEvent = NOEVENT;
+			}
+		}
+		
+		return winEvent;
+}
+
+void SDL_CONTEXT::Quit()
 {
 	SDL_Quit();
 }

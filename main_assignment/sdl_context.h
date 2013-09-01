@@ -13,16 +13,20 @@
  *
  */
 
-class SDL_Context {
+class SDL_CONTEXT {
 	public:
-		static void Init( std::string title, int WINDOW_HEIGHT, int WINDOW_WIDTH );		
+		static SDL_GLContext mglContext;
+		
+		static SDL_GLContext Init( std::string title, int WINDOW_HEIGHT, int WINDOW_WIDTH );		
+		static  ProcessInput();
+
 		static void Quit();	
 
 	private:
 		static std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> mWindow;
 		//static std::unique_ptr<SDL_GLContext, void (*)(SDL_GLContext)> mglContext;
-		static SDL_GLContext mglContext;
 		static SDL_Rect mBox;
+		static SDL_Event windowEvent;
 };
 
 #endif

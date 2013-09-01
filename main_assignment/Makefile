@@ -2,7 +2,7 @@
 CC=g++
 CFLAGS=-c -g -std=c++11 -Wall 
 LDFLAGS=-lSDL2 -lSDL2_image -lGLEW -lGL -lSOIL
-SOURCES=src/maintest.cpp src/sdl_context.cpp
+SOURCES=src/maintest.cpp src/core.cpp src/gl_core.cpp src/sdl_context.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=gl_out
 
