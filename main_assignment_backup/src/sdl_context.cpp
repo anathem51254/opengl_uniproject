@@ -44,32 +44,24 @@ void SDL_CONTEXT::ClearWindow(SDL_Window* SDLWindow)
 	SDL_GL_SwapWindow(SDLWindow);
 }
 
-SDL_CONTEXT::WindowEvents SDL_CONTEXT::ProcessEvent()
+int SDL_CONTEXT::ProcessEvent()
 {	
-		WindowEvents winEvent = NOEVENT;
+		int winEvent = 0;
 	
 		SDL_Event sdl_Event;
 
-		if(SDL_PollEvent(&sdl_Event))
+		if( SDL_PollEvent(&sdl_Event) )
 		{
-				if(sdl_Event.type == SDL_QUIT)
+				if( sdl_Event.type == SDL_QUIT )
 				{
-					winEvent = ESC;
+					winEvent = 1;
 				}
-				else if (sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_ESCAPE)
+				else if ( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_ESCAPE )
 				{
-					winEvent = ESC;
-				}
-				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_1)
-				{
-					winEvent = ONE;
-				}
-				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_2)
-				{
-					winEvent = TWO;
+					winEvent = 1;
 				}
 				else
-					winEvent = NOEVENT;
+					winEvent = 0;
 		}
 		
 		return winEvent;

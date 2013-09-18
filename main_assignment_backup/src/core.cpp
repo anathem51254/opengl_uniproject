@@ -7,10 +7,6 @@ SDL_CONTEXT *sdl_context;
 const unsigned int WINDOW_WIDTH  = 1280;
 const unsigned int WINDOW_HEIGHT = 720;
 
-const float FOV = 90.0f;
-const float NearPlane = 0.1f;
-const float FarPlane = 100.0f;
-
 const int ShaderNumber = 2;
 
 GLuint Shaders[ShaderNumber];
@@ -19,8 +15,8 @@ GLuint GenericShaderProgram = 0;
 
 GLuint vao[2];
 
-glm::mat4 ViewMatrix; 
-glm::mat4 ProjectionMatrix;
+glm::mat4 viewMatrix; 
+glm::mat4 projMatrix;
 
 GLint uniModel;
 GLint uniView;
@@ -291,11 +287,9 @@ int CORE::InitGL()
 
 void CORE::SetDefaultCamera()
 {
-	float aspectRatio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+	viewMatrix = glm::lookAt(glm::vec3( 1.5f, 1.5f, 1.5f ), glm::vec3(0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 0.0f, 1.0f ));
 
-	ViewMatrix = glm::lookAt(glm::vec3( 1.5f, 1.5f, 1.5f ), glm::vec3(0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 0.0f, 1.0f ));
-
-	ProjectionMatrix = glm::perspective(FOV, aspectRatio, NearPlane, FarPlane);
+	projMatrix = glm::perspective( 90.0f, 1280.0f / 720.0f, 1.0f, 10.0f );
 }
 
 void CORE::MoveCameraLeft()
@@ -315,10 +309,13 @@ void CORE::InitScene()
 
 void CORE::DisplayScene()
 {
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glUseProgram(GenericShaderProgram);
 
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(projMatrix));
 	
 	glm::mat4 temp_modelMatrix;
 
@@ -362,18 +359,12 @@ void CORE::DisplayScene()
 
 CORE::WindowEvents CORE::ProcessEvent()
 {
-	WindowEvents windowEvent = (WindowEvents)sdl_context->ProcessEvent();
+	int windowEvent = sdl_context->ProcessEvent();
 
-	switch(windowEvent)
+	switch( windowEvent )
 	{
-		case ESC:
+		case 1:
 			return ESC;
-		case ONE:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			return ONE;
-		case TWO:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			return TWO;
 		default:
 			return NOEVENT;
 	}	
@@ -421,11 +412,8 @@ int CORE::MainLoop()
 	{
 		utils->CheckErrors("MainLoop()");	
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		event = ProcessEvent();	
-		if( event != NOEVENT )
+		if( event != 0 )
 			std::cout << "[DEBUG] " << event << std::endl;
 
 		DisplayScene();

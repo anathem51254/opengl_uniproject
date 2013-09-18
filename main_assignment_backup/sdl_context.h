@@ -26,20 +26,13 @@ class SDL_CONTEXT
 
 		~SDL_CONTEXT ();
 
-		enum		WindowEvents { 
-						NOEVENT, 
-						ESC, 
-						ONE, 
-						TWO 
-					     }; 
-
 		SDL_Window* 	CreateSDLWindow(std::string title, int WINDOW_HEIGHT, int WINDOW_WIDTH);		
 		
 		SDL_GLContext	CreateGLContext(SDL_Window* SDLWindow);
 
 		void 		ClearWindow(SDL_Window* SDLWindow);
 		
-		WindowEvents 	ProcessEvent();
+		int 		ProcessEvent();
 
 		void 		Quit();	
 };
