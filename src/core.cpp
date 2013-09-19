@@ -1,5 +1,5 @@
 
-#include "../core.h"
+#include "../headers/core.h"
 
 UTILS *utils;
 SDL_CONTEXT *sdl_context;

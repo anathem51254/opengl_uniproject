@@ -1,5 +1,5 @@
 
-#include "../sdl_context.h"
+#include "../headers/sdl_context.h"
 
 
 SDL_CONTEXT::SDL_CONTEXT()
