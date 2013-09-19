@@ -9,7 +9,7 @@ SDL_CONTEXT::SDL_CONTEXT()
 
 SDL_CONTEXT::~SDL_CONTEXT()
 {
-
+	SDL_Quit();
 }
 
 SDL_Window* SDL_CONTEXT::CreateSDLWindow(std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT)
@@ -68,6 +68,18 @@ SDL_CONTEXT::WindowEvents SDL_CONTEXT::ProcessEvent()
 				{
 					winEvent = TWO;
 				}
+				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_5)
+				{
+					winEvent = FIVE;
+				}
+				else if(sdl_Event.key.keysym.sym == SDLK_a)
+				{
+					winEvent = A;
+				}
+				else if(sdl_Event.key.keysym.sym == SDLK_d)
+				{
+					winEvent = D;
+				}
 				else
 					winEvent = NOEVENT;
 		}
@@ -75,7 +87,3 @@ SDL_CONTEXT::WindowEvents SDL_CONTEXT::ProcessEvent()
 		return winEvent;
 }
 
-void SDL_CONTEXT::Quit()
-{
-	SDL_Quit();
-}

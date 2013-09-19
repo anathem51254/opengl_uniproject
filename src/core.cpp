@@ -1,32 +1,14 @@
 
 #include "../headers/core.h"
 
-UTILS *utils;
-SDL_CONTEXT *sdl_context;
-
-const unsigned int WINDOW_WIDTH  = 1280;
-const unsigned int WINDOW_HEIGHT = 720;
-
-const float FOV = 90.0f;
-const float NearPlane = 0.1f;
-const float FarPlane = 100.0f;
-
-const int ShaderNumber = 2;
-
-GLuint Shaders[ShaderNumber];
-
-GLuint GenericShaderProgram = 0;
 
 GLuint vao[2];
 
-glm::mat4 ViewMatrix; 
-glm::mat4 ProjectionMatrix;
+glm::mat4 MatrixStack[10];
 
-GLint uniModel;
-GLint uniView;
-GLint uniProj;
+unsigned int MatrixStackNumber = 0;
 
-GLint uniColor;
+float CameraAngle = 0.0f;
 
 // Cube 
 const float CubeVertices[] = { 
@@ -74,6 +56,7 @@ const float CubeVertices[] = {
 	-0.5f,  0.5f, -0.5f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f
 
 };
+
 const float FloorVertices[] = {
 	
 	// floor
@@ -85,103 +68,27 @@ const float FloorVertices[] = {
 	-1.2f, -1.2f, -0.5f, 0.0f, 0.0f, 0.0f //0.0f, 1.0f
 };
 
-// Shaders
-const std::string vertexShaderSource(
-	"#version 430\n"
-	"layout(location = 0) in vec3 position;\n"
-	"layout(location = 1) in vec3 color;\n"
-	"out vec3 Color;\n"
-	"uniform mat4 modelMatrix;\n"
-	"uniform mat4 viewMatrix;\n"
-	"uniform mat4 projMatrix;\n"
-	"uniform vec3 overrideColor;\n"
-	"void main() {\n"
-		"Color = overrideColor * color;\n"
-		"gl_Position = projMatrix * viewMatrix * modelMatrix * vec4( position, 1.0f );\n"
-	"}\n"
-);	
-
-const std::string fragmentShaderSource(
-	"#version 430\n"
-	"in vec3 Color;\n"
-	"out vec4 outColor;\n"
-	"void main() {\n"
-		"outColor = vec4( Color, 1.0 );\n"
-	"}\n"
-);
-
 
 CORE::CORE () 
 { 
+	WINDOW_WIDTH = 1600;
+	WINDOW_HEIGHT = 900;
+
+	FOV = 90.0f;
+	NearPlane = 0.1f;
+	FarPlane = 100.0f;
+	
 	utils = new UTILS;
 	sdl_context = new SDL_CONTEXT;
+	generic_shader = new SHADER_PROGRAM;
 }
 
 CORE::~CORE () 
 { 
 	delete utils;
 	delete sdl_context;
+	delete generic_shader;
 }
-
-int CORE::DebugShaderProgram(GLuint ShaderProgram, GLint status)
-{
-	glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &status);
-	if(status == GL_FALSE) {
-		std::cout << "[DEBUG] Linking Program [FAILED]\n" << std::endl;
-		
-		GLint infoLogLength;
-		glGetProgramiv(ShaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-		glGetProgramInfoLog(ShaderProgram, infoLogLength, NULL, strInfoLog);
-
-		std::cout << "[DEBUG] Linking Program Log: \n\n" << strInfoLog << std::endl;
-
-		delete[] strInfoLog;
-
-		return -1;
-	}
-	std::cout << "[DEBUG] Linking Program [OK]\n" << std::endl;
-
-	return 0;
-}
-
-GLuint CORE::CreateShader( const std::string &shaderSource, GLenum eShaderType )
-{
-	GLuint shader = glCreateShader(eShaderType);
-	const char* shaderSourceStr = shaderSource.c_str();
-	glShaderSource(shader, 1, &shaderSourceStr, NULL);
-
-	glCompileShader(shader);
-
-	const char* strShaderType = NULL;
-	switch(eShaderType)
-	{
-		case GL_VERTEX_SHADER:
-			strShaderType = "Vertex"; break;
-		case GL_GEOMETRY_SHADER:
-			strShaderType = "Geometry"; break;
-		case GL_FRAGMENT_SHADER:
-			strShaderType = "Fragment"; break;
-	}
-
-	GLint status = 0;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-	if(status == GL_FALSE) {
-		GLint infoLogLength;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-		
-		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-		glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-		
-		std::cout << "[DEBUG] " << strShaderType << " Compilation error: " << strInfoLog << std::endl;
-		delete[] strInfoLog;
-	}
-	else
-		std::cout << "[DEBUG] " << strShaderType << " Compilation [OK] " << std::endl;
-
-	return shader;
-} 
 
 void CORE::InitBuffers()
 {
@@ -230,41 +137,56 @@ void CORE::InitBuffers()
 
 }
 
-int CORE::InitGenericShaders()
+//////////////////////////////////////////////////
+//		Model Matrix Code		//
+//////////////////////////////////////////////////
+
+glm::mat4 CORE::RotateModelMatrix(glm::mat4 temp_modelMatrix, const float angle, glm::vec3 const vec)
 {
-	int retn = 0;
+       	temp_modelMatrix = glm::rotate(temp_modelMatrix, angle, vec); 
 
-	Shaders[0] = CreateShader( vertexShaderSource, GL_VERTEX_SHADER );
-	Shaders[1] = CreateShader( fragmentShaderSource, GL_FRAGMENT_SHADER );
-
-	GenericShaderProgram = glCreateProgram();
-	utils->CheckErrors("glCreateProgram()");
-
-	for(int i = 0; i < ShaderNumber; i++)
-	{
-		glAttachShader(GenericShaderProgram, Shaders[i]);
-	}
-
-	GLint status = 0;
-
-	glLinkProgram(GenericShaderProgram);
-	retn = DebugShaderProgram(GenericShaderProgram, status);
-
-	if(retn == 0)
-	{
-		uniModel = glGetUniformLocation(GenericShaderProgram, "modelMatrix");	
-		utils->CheckErrors("glGetUniformLocation(modelMatrix)");
-		uniView = glGetUniformLocation(GenericShaderProgram, "viewMatrix");
-		utils->CheckErrors("glGetUniformLocation(viewMatrix)");
-		uniProj = glGetUniformLocation(GenericShaderProgram, "projMatrix");
-		utils->CheckErrors("glGetUniformLocation(projMatrix)");
-
-		uniColor = glGetUniformLocation(GenericShaderProgram, "overrideColor");
-		utils->CheckErrors("glGetUniformLocation(overrideColor)");
-	}
-
-	return retn;
+	return temp_modelMatrix;
 }
+
+glm::mat4 CORE::TranslateModelMatrix(glm::mat4 temp_modelMatrix, glm::vec3 const vec)
+{
+	temp_modelMatrix = glm::translate(temp_modelMatrix, vec);
+
+	return temp_modelMatrix;
+}
+
+glm::mat4 CORE::ScaleModelMatrix(glm::mat4 temp_modelMatrix, glm::vec3 const vec)
+{
+	temp_modelMatrix = glm::scale(temp_modelMatrix, vec);
+	
+	return temp_modelMatrix;
+}
+
+glm::mat4 CORE::PushModelMatrix(glm::mat4 temp_ModelMatrix)
+{
+	MatrixStack[MatrixStackNumber] = temp_ModelMatrix;
+	MatrixStackNumber++;
+
+	return temp_ModelMatrix;
+}
+
+glm::mat4 CORE::PopModelMatrix(glm::mat4 temp_ModelMatrix)
+{
+	if(MatrixStackNumber == 0)
+	{
+		temp_ModelMatrix = MatrixStack[0];
+	}
+	else
+	{
+		MatrixStackNumber--;
+		temp_ModelMatrix = MatrixStack[MatrixStackNumber];
+		
+	}
+
+	return temp_ModelMatrix;
+}
+
+
 
 int CORE::InitGL()
 {
@@ -283,30 +205,74 @@ int CORE::InitGL()
 	glEnable(GL_DEPTH_TEST);
 	utils->CheckErrors("glEnable(GL_DEPTH_TEST)");
 	
-	InitGenericShaders();
+	generic_shader->InitGenericShaders();
 	InitBuffers();
 
 	return 0;	
 }
 
+
+
+
 void CORE::SetDefaultCamera()
 {
+	CameraAngle = 0.0f;
+
 	float aspectRatio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 
-	ViewMatrix = glm::lookAt(glm::vec3( 1.5f, 1.5f, 1.5f ), glm::vec3(0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 0.0f, 1.0f ));
+	ViewMatrix = glm::lookAt(glm::vec3(0.0f, 1.5f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	ProjectionMatrix = glm::perspective(FOV, aspectRatio, NearPlane, FarPlane);
 }
 
 void CORE::MoveCameraLeft()
 {
+	if(CameraAngle == 0.0f)
+	{
+		CameraAngle = 360.0f;
+	}
 
+	if(CameraAngle <= 360.0f)
+	{
+		CameraAngle -= 1.0f; 
+	}
+
+	std::cout << "[DEBUG] Camera Angle: " << CameraAngle << std::endl;
+
+	float aspectRatio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+
+	ViewMatrix = glm::lookAt(glm::vec3(0.0f, 1.5f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+       	ViewMatrix = glm::rotate(ViewMatrix, CameraAngle, glm::vec3(0.0f, 0.0f, 1.0f)); 
+
+	ProjectionMatrix = glm::perspective(FOV, aspectRatio, NearPlane, FarPlane);
 }
 
 void CORE::MoveCameraRight()
 {
+	if(CameraAngle == 360.0f)
+	{
+		CameraAngle = 0.0f;
+	}
 
+	if(CameraAngle <= 360.0f)
+	{
+		CameraAngle += 1.0f; 
+	}
+
+	std::cout << "[DEBUG] Camera Angle: " << CameraAngle << std::endl;
+
+	float aspectRatio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+
+	ViewMatrix = glm::lookAt(glm::vec3(0.0f, 1.5f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+       	ViewMatrix = glm::rotate(ViewMatrix, CameraAngle, glm::vec3(0.0f, 0.0f, 1.0f)); 
+
+	ProjectionMatrix = glm::perspective(FOV, aspectRatio, NearPlane, FarPlane);
 }
+
+
+
 
 void CORE::InitScene()
 {
@@ -315,15 +281,15 @@ void CORE::InitScene()
 
 void CORE::DisplayScene()
 {
-	glUseProgram(GenericShaderProgram);
 
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-	
+	generic_shader->UseShaderProgram(ViewMatrix, ProjectionMatrix);	
+
 	glm::mat4 temp_modelMatrix;
 
-       	temp_modelMatrix = glm::rotate( temp_modelMatrix, ( (float)clock() / (float)CLOCKS_PER_SEC * 180.0f ) , glm::vec3( 0.0, 0.0f, 1.0f ) ); 
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
+	temp_modelMatrix = PushModelMatrix(temp_modelMatrix);
+
+	temp_modelMatrix = RotateModelMatrix(temp_modelMatrix, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	generic_shader->UpdateUniformModel(temp_modelMatrix);
 
 
 	// Draw Cube
@@ -349,15 +315,24 @@ void CORE::DisplayScene()
 		glStencilFunc(GL_EQUAL, 1, 0xFF);
 		glStencilMask(0x00);
 		glDepthMask(GL_TRUE);	
+
+		//temp_modelMatrix = PopMatrix(temp_modelMatrix);		
+		//temp_modelMatrix = PushMatrix(temp_modelMatrix);
+
+		temp_modelMatrix = TranslateModelMatrix(temp_modelMatrix, glm::vec3(0.0f, 0.0f, -1.0f));
+		generic_shader->UpdateUniformModel(temp_modelMatrix);
+
+		temp_modelMatrix = ScaleModelMatrix(temp_modelMatrix, glm::vec3(1.0f, 1.0f, -1.0f));
+		generic_shader->UpdateUniformModel(temp_modelMatrix);
 		
-		temp_modelMatrix = glm::scale( glm::translate(temp_modelMatrix, glm::vec3(0,0,-1) ), glm::vec3(1, 1, -1));
-		glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
-		
-		glUniform3f(uniColor, 0.3f, 0.3f, 0.3f);
+		generic_shader->ChangeUniformColor(0.3f, 0.3f, 0.3f);	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glUniform3f(uniColor, 1.0f, 1.0f, 1.0f);
+		generic_shader->ChangeUniformColor(1.0f, 1.0f, 1.0f);
 	
-	glDisable(GL_STENCIL_TEST);	
+	glDisable(GL_STENCIL_TEST);
+
+	temp_modelMatrix = PopModelMatrix(temp_modelMatrix);
+
 }
 
 CORE::WindowEvents CORE::ProcessEvent()
@@ -374,6 +349,15 @@ CORE::WindowEvents CORE::ProcessEvent()
 		case TWO:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			return TWO;
+		case FIVE:
+			SetDefaultCamera();
+			return FIVE;
+		case A:
+			MoveCameraLeft();
+			return A;
+		case D:
+			MoveCameraRight();	
+			return D;
 		default:
 			return NOEVENT;
 	}	
@@ -389,7 +373,6 @@ int CORE::InitSDL()
 	catch( const std::runtime_error &e)
 	{
 		std::cout << e.what() << std::endl;
-		sdl_context->Quit();
 		return -1;
 	}
 
@@ -398,17 +381,7 @@ int CORE::InitSDL()
 
 void CORE::CleanUp()
 {
-
 	glDeleteVertexArrays(2, vao);
-
-	glDeleteProgram(GenericShaderProgram);
-
-	for(int i = 0; i < ShaderNumber; i++)
-	{
-		glDeleteShader(Shaders[i]);
-	}
-
-	sdl_context->Quit();
 }
 
 int CORE::MainLoop()

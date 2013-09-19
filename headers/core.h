@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
+#include <cmath>
 
 #include "SOIL/SOIL.h"
 
@@ -24,6 +25,7 @@
 
 #include "utils.h"
 #include "sdl_context.h"
+#include "shaderprogram.h"
 
 class CORE 
 {
@@ -32,15 +34,33 @@ class CORE
 		CORE ();
 		~CORE ();
 
+		UTILS *utils;
+		SDL_CONTEXT *sdl_context;
+
+		SHADER_PROGRAM *generic_shader;
+
 		SDL_GLContext GLContext;
 
 		SDL_Window *SDLWindow;
+
+		unsigned int WINDOW_WIDTH;
+		unsigned int WINDOW_HEIGHT;
+
+		float FOV;	
+		float NearPlane;
+		float FarPlane;
+
+		glm::mat4 ViewMatrix;
+		glm::mat4 ProjectionMatrix;
 
 		enum		WindowEvents { 
 						NOEVENT, 
 						ESC, 
 						ONE, 
-						TWO 
+						TWO,
+						FIVE,
+						A,
+						D
 					     }; 
 
 		void    	Start();	
@@ -62,6 +82,16 @@ class CORE
 		void		MoveCameraLeft();
 
 		void		MoveCameraRight();
+
+		glm::mat4	TranslateModelMatrix(glm::mat4 temp_ModelMatrix, glm::vec3 const vec);
+		
+		glm::mat4	ScaleModelMatrix(glm::mat4 temp_ModelMatrix, glm::vec3 const vec);
+
+		glm::mat4	RotateModelMatrix(glm::mat4 temp_ModelMatrix, const float angle, glm::vec3 const vec);
+
+		glm::mat4	PushModelMatrix(glm::mat4 temp_ModelMatrix);
+
+		glm::mat4 	PopModelMatrix(glm::mat4 temp_ModelMatrix);
 		
 		void		InitScene();
 
@@ -69,15 +99,9 @@ class CORE
 		
 		void	    	CleanUp();
 
-		int		DebugShaderProgram(GLuint ShaderProgram, GLint status);
-
-		GLuint 		CreateShader( const std::string &shaderSource, GLenum eShaderType ); 
-
 		void 		InitBuffers();
 
-		int		InitGenericShaders();
-
-		void 		gl_LoadTexture( std::string file, unsigned int texNum );
+		void 		gl_LoadTexture(std::string file, unsigned int texNum);
 
 };
 

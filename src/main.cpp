@@ -4,8 +4,9 @@
 
 int main(int argc, char** argv)
 {
-	CORE core;
-	core.Start();
+	CORE *core = new CORE;
+	core->Start();
+	delete core;
 	
 	return 0;
 }

@@ -2,7 +2,7 @@
 CC=g++
 CFLAGS=-Wall -c -g -std=c++11 
 LDFLAGS=-lSDL2 -lSDL2_image -lGLEW -lGL -lSOIL
-SOURCES=src/main.cpp src/core.cpp src/sdl_context.cpp src/utils.cpp
+SOURCES=src/main.cpp src/core.cpp src/shaderprogram.cpp src/sdl_context.cpp src/utils.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=gl_out
 

@@ -1,6 +1,6 @@
 
 #ifndef SDL_CONTEXT_H
-#define SDL_CONTEXT__H
+#define SDL_CONTEXT_H
 
 #include <stdexcept>
 #include <memory>
@@ -28,7 +28,10 @@ class SDL_CONTEXT
 						NOEVENT, 
 						ESC, 
 						ONE, 
-						TWO 
+						TWO,
+						FIVE,
+						A,
+						D
 					     }; 
 
 		SDL_Window* 	CreateSDLWindow(std::string title, int WINDOW_HEIGHT, int WINDOW_WIDTH);		
@@ -38,8 +41,9 @@ class SDL_CONTEXT
 		void 		ClearWindow(SDL_Window* SDLWindow);
 		
 		WindowEvents 	ProcessEvent();
+	
+	private:
 
-		void 		Quit();	
 };
 
 #endif
