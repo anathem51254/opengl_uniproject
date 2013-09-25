@@ -31,14 +31,14 @@ void CAMERA::SetDefaultCamera()
 {
 	CameraAngle = 0.0f;
 
-	DefaultCameraMatrix.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 1.5f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	DefaultCameraMatrix.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 5.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	DefaultCameraMatrix.ProjectionMatrix = glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
 }
 
 void CAMERA::RotateCameraAngle(const float _CameraAngle)
 {
-	DefaultCameraMatrix.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 1.5f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	DefaultCameraMatrix.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 5.0f, 1.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
        	DefaultCameraMatrix.ViewMatrix = glm::rotate(DefaultCameraMatrix.ViewMatrix, _CameraAngle, glm::vec3(0.0f, 0.0f, 1.0f)); 
 

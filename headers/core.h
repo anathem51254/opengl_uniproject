@@ -104,15 +104,16 @@ class CORE
 
 		void		RotateModelMatrix(const float angle, glm::vec3 const vec);
 
+		void		DrawFloorANDReflection();
+
+		void		DrawBeams(glm::mat4 ModelMatrix);
+		void		DrawLegs(glm::mat4 ModelMatrix);
+
 		void		InitScene();
 
 		void	    	DisplayScene();
 		
 		void	    	CleanUp();
-
-		void 		InitBuffers();
-
-		void 		gl_LoadTexture(std::string file, unsigned int texNum);
 
 };
 

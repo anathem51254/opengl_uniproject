@@ -26,11 +26,14 @@ CORE::CORE ()
 
 CORE::~CORE () 
 { 
-	delete cube;
-	delete utils;
 	delete sdl_context;
-	delete generic_shader;
+
+	delete utils;
 	delete camera;
+
+	delete generic_shader;
+
+	delete cube;
 }
 
 
@@ -83,30 +86,11 @@ void CORE::InitScene()
 	camera->SetDefaultCamera();
 }
 
-void CORE::DisplayScene()
+void CORE::DrawFloorANDReflection()
 {
-
-	generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.ViewMatrix, camera->DefaultCameraMatrix.ProjectionMatrix);	
-
-	glm::mat4 ModelMatrix;
-
-	MatrixStack.push(ModelMatrix);
-
-	RotateModelMatrix(0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	generic_shader->UpdateUniformModel(MatrixStack.top());
-
-
-	// Draw Cube
-	cube->BindObject(0);
-	//glBindVertexArray(vao[0]);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
-	cube->DrawCube();
-
-
 	glEnable(GL_STENCIL_TEST);
 	utils->CheckErrors("glEnable(GL_STENCIL_TEST)");
 
-		//glBindVertexArray(vao[1]);
 		cube->BindObject(1);
 		// Draw Floor
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -114,13 +98,11 @@ void CORE::DisplayScene()
 		glStencilMask(0xFF);
 		glDepthMask(GL_FALSE);
 		glClear(GL_STENCIL_BUFFER_BIT);
-		
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+
 		cube->DrawFloor();
 		
-		//glBindVertexArray(vao[0]);
-		cube->BindObject(0);
 		// Draw Reflection
+		cube->BindObject(0);
 		glStencilFunc(GL_EQUAL, 1, 0xFF);
 		glStencilMask(0x00);
 		glDepthMask(GL_TRUE);	
@@ -132,11 +114,115 @@ void CORE::DisplayScene()
 		generic_shader->UpdateUniformModel(MatrixStack.top());
 		
 		generic_shader->ChangeUniformColor(0.3f, 0.3f, 0.3f);	
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
 		cube->DrawCube();
 		generic_shader->ChangeUniformColor(1.0f, 1.0f, 1.0f);
 	
 	glDisable(GL_STENCIL_TEST);
+}
+
+
+void CORE::DrawBeams(glm::mat4 ModelMatrix)
+{
+	// Center Beam
+	for(float x = -1; x < 2; x++)
+	{
+		MatrixStack.push(ModelMatrix);
+			TranslateModelMatrix(glm::vec3(0.0f, x, 0.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			cube->DrawCube();
+		MatrixStack.pop();
+	}
+	
+	// Draw beams to the right 
+	for(float x = 1; x < 4; x++)
+	{
+		for(float y = -1; y < 2; y++)
+		{
+			MatrixStack.push(ModelMatrix);
+				TranslateModelMatrix(glm::vec3(x, y, 0.0f));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+
+	// Draw beams to the left
+	for(float x = -1; x > -4; x--)	
+	{
+		for(float y = -1; y < 2; y++)
+		{
+			MatrixStack.push(ModelMatrix);
+				TranslateModelMatrix(glm::vec3(x, y, 0.0f));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+}
+
+void CORE::DrawLegs(glm::mat4 ModelMatrix)
+{
+	// Draw legs to the right
+	for(float x = 1; x < 4; x+=2)
+	{
+		for(float y = -1; y < 2; y+=2)
+		{
+			MatrixStack.push(ModelMatrix);
+				TranslateModelMatrix(glm::vec3(x, y, -1.0f));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+
+	for(float x = -1; x > -4; x-=2)
+	{
+		for(float y = -1; y < 2; y+=2)
+		{
+			MatrixStack.push(ModelMatrix);
+				TranslateModelMatrix(glm::vec3(x, y, -1.0f));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+}
+
+void CORE::DisplayScene()
+{
+	generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.ViewMatrix, camera->DefaultCameraMatrix.ProjectionMatrix);	
+
+	glm::mat4 ModelMatrix;
+
+	MatrixStack.push(ModelMatrix);
+
+	//glEnable(GL_STENCIL_TEST);
+	//utils->CheckErrors("glEnable(GL_STENCIL_TEST)");
+
+		/*glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilMask(0xFF);
+		glDepthMask(GL_FALSE);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		*/
+
+		cube->BindObject(0);
+
+		/*		
+		glStencilFunc(GL_EQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDepthMask(GL_TRUE);	
+		*/
+
+		generic_shader->ChangeUniformColor(0.3f, 0.6f, 0.2f);	
+
+		RotateModelMatrix(0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+
+		DrawBeams(ModelMatrix);
+		DrawLegs(ModelMatrix);
+
+	//glDisable(GL_STENCIL_TEST);
 
 	MatrixStack.pop();
 }
