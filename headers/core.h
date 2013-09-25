@@ -3,10 +3,14 @@
 
 #include <stdexcept>
 #include <memory>
+
 #include <string>
+#include <stack>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 #include <ctime>
 #include <cmath>
 
@@ -24,8 +28,12 @@
 #include "SDL2/SDL_opengl.h"
 
 #include "utils.h"
+#include "camera.h"
 #include "sdl_context.h"
 #include "shaderprogram.h"
+#include "objects.h"
+
+using namespace std;
 
 class CORE 
 {
@@ -34,24 +42,31 @@ class CORE
 		CORE ();
 		~CORE ();
 
-		UTILS *utils;
 		SDL_CONTEXT *sdl_context;
 
+		UTILS *utils;
+		CAMERA *camera;
+
 		SHADER_PROGRAM *generic_shader;
+
+		OBJECTS *cube;
+
 
 		SDL_GLContext GLContext;
 
 		SDL_Window *SDLWindow;
 
-		unsigned int WINDOW_WIDTH;
-		unsigned int WINDOW_HEIGHT;
+
+		float WINDOW_WIDTH;
+		float WINDOW_HEIGHT;
 
 		float FOV;	
 		float NearPlane;
 		float FarPlane;
 
-		glm::mat4 ViewMatrix;
-		glm::mat4 ProjectionMatrix;
+		struct CameraMatrix;
+
+		float CameraAngle = 0.0f;
 
 		enum		WindowEvents { 
 						NOEVENT, 
@@ -83,16 +98,12 @@ class CORE
 
 		void		MoveCameraRight();
 
-		glm::mat4	TranslateModelMatrix(glm::mat4 temp_ModelMatrix, glm::vec3 const vec);
+		void		TranslateModelMatrix(glm::vec3 const vec);
 		
-		glm::mat4	ScaleModelMatrix(glm::mat4 temp_ModelMatrix, glm::vec3 const vec);
+		void		ScaleModelMatrix(glm::vec3 const vec);
 
-		glm::mat4	RotateModelMatrix(glm::mat4 temp_ModelMatrix, const float angle, glm::vec3 const vec);
+		void		RotateModelMatrix(const float angle, glm::vec3 const vec);
 
-		glm::mat4	PushModelMatrix(glm::mat4 temp_ModelMatrix);
-
-		glm::mat4 	PopModelMatrix(glm::mat4 temp_ModelMatrix);
-		
 		void		InitScene();
 
 		void	    	DisplayScene();
