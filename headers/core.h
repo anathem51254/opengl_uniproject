@@ -57,64 +57,68 @@ class CORE
 		SDL_Window *SDLWindow;
 
 
-		float WINDOW_WIDTH;
-		float WINDOW_HEIGHT;
+		float 	WINDOW_WIDTH;
+		float 	WINDOW_HEIGHT;
 
-		float FOV;	
-		float NearPlane;
-		float FarPlane;
+		float 	FOV;	
+		float 	NearPlane;
+		float 	FarPlane;
 
-		struct CameraMatrix;
+		struct 	CameraMatrix;
 
-		float CameraAngle = 0.0f;
+		float 	CameraAngle = 0.0f;
 
-		enum		WindowEvents { 
-						NOEVENT, 
-						ESC, 
-						ONE, 
-						TWO,
-						FIVE,
-						A,
-						D
-					     }; 
+		enum	WindowEvents 
+		{ 
+			NOEVENT, 
+			ESC, 
+			ONE, 
+			TWO,
+			FIVE,
+			MOUSE,
+			W,
+			S,
+			A,
+			D,						
+			Q,
+			E,
+			RIGHT,
+			LEFT
+		}; 
 
-		void    	Start();	
+		WindowEvents Event;
+		WindowEvents CameraEvent;
+
+		void    Start();	
 	
 	private:		
 
-		void	    	Initialise();
+		void   	Initialise();
 		
-		int	    	InitSDL();	
+		int    	InitSDL();	
 
-		int		InitGL();
+		int	InitGL();
 
-		WindowEvents 	ProcessEvent();
+		void	ProcessEvent();
+
+		void	ProcessCameraEvent();
 		
-		int	    	MainLoop();
+		int    	MainLoop();
 
-		void		SetDefaultCamera();
-
-		void		MoveCameraLeft();
-
-		void		MoveCameraRight();
-
-		void		TranslateModelMatrix(glm::vec3 const vec);
+		void	TranslateModelMatrix(glm::vec3 const vec);
 		
-		void		ScaleModelMatrix(glm::vec3 const vec);
+		void	ScaleModelMatrix(glm::vec3 const vec);
 
-		void		RotateModelMatrix(const float angle, glm::vec3 const vec);
+		void	RotateModelMatrix(const float angle, glm::vec3 const vec);
 
-		void		DrawFloorANDReflection();
+		void	DrawBeams();
+		void	DrawLegs();
 
-		void		DrawBeams(glm::mat4 ModelMatrix);
-		void		DrawLegs(glm::mat4 ModelMatrix);
+		void 	DrawCube();
 
-		void		InitScene();
-
-		void	    	DisplayScene();
+		void	DisplayScene(const float);
 		
-		void	    	CleanUp();
-
+		void  	CleanUp();
 };
 
 #endif

@@ -30,9 +30,18 @@ class SDL_CONTEXT
 						ONE, 
 						TWO,
 						FIVE,
+						MOUSE,
+						W,
+						S,
 						A,
-						D
+						D,
+						Q,
+						E,
+						RIGHT,
+						LEFT
 					     }; 
+
+		SDL_Event SDLEvent;
 
 		SDL_Window* 	CreateSDLWindow(std::string title, int WINDOW_HEIGHT, int WINDOW_WIDTH);		
 		
@@ -41,6 +50,13 @@ class SDL_CONTEXT
 		void 		ClearWindow(SDL_Window* SDLWindow);
 		
 		WindowEvents 	ProcessEvent();
+
+		unsigned int	GetTime();
+
+		void		CenterMouse(SDL_Window* SDLWindow, int width, int height);
+
+		float		GetMouseRelX();
+		float		GetMouseRelY();
 	
 	private:
 

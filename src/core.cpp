@@ -5,14 +5,28 @@
 std::stack<glm::mat4> MatrixStack;
 
 
+const int UPDATES_PER_SECOND 	= 60;
+const int SKIP_UPDATES		= 1000 / UPDATES_PER_SECOND;	
+const int MAX_FRAMESKIP 	= 5;
+
+unsigned int NextGameTick;
+int Loops;
+float Interpolation;
+
+bool Running = true;
+
+unsigned int Time;
+
 CORE::CORE () 
 { 
-	WINDOW_WIDTH = 1600.0f;
-	WINDOW_HEIGHT = 900.0f;
+	WINDOW_WIDTH = 1024.0f;
+	WINDOW_HEIGHT = 720.0f;
 
 	FOV = 90.0f;
 	NearPlane = 0.1f;
-	FarPlane = 100.0f;
+	FarPlane = 5000.0f;
+
+	Event = NOEVENT;
 	
 	sdl_context = new SDL_CONTEXT;
 
@@ -81,178 +95,204 @@ int CORE::InitGL()
 	return 0;	
 }
 
-void CORE::InitScene()
+void CORE::DrawBeams()
 {
-	camera->SetDefaultCamera();
+
+	cube->BindObject(0);
+
+	generic_shader->ChangeUniformColor(255.0f, 206.0f, 153.0f);	
+
+	// Draw beams to the right and down the Z axis
+	for(float x = 16.0f; x < 112.0f; x += 32.0f)
+	{
+		for(float z = -48.0f; z > -144.0f; z += -32.0f)
+		{
+			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+				TranslateModelMatrix(glm::vec3(x, 32.0f, z));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+
+	// Draw beams to the left and down the Z axis
+	for(float x = -16.0f; x > -112.0f; x += -32.0f)
+	{
+		for(float z = -48.0f; z > -144.0f; z += -32.0f)
+		{
+			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+				TranslateModelMatrix(glm::vec3(x, 32.0f, z));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
 }
 
-void CORE::DrawFloorANDReflection()
+void CORE::DrawLegs()
 {
-	glEnable(GL_STENCIL_TEST);
-	utils->CheckErrors("glEnable(GL_STENCIL_TEST)");
+	cube->BindObject(1);
 
-		cube->BindObject(1);
-		// Draw Floor
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		glStencilMask(0xFF);
-		glDepthMask(GL_FALSE);
-		glClear(GL_STENCIL_BUFFER_BIT);
+	generic_shader->ChangeUniformColor(200.0f, 150.0f, 100.0f);	
 
-		cube->DrawFloor();
-		
-		// Draw Reflection
-		cube->BindObject(0);
-		glStencilFunc(GL_EQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDepthMask(GL_TRUE);	
+	// Draw legs to the right and down the Z axis
+	for(float x = 16.0f; x < 112.0f; x += 64.0f)
+	{
+		for(float z = -40.0f; z > -136.0f; z += -80.0f)
+		{
+			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+				TranslateModelMatrix(glm::vec3(x, -16.0f, z));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
 
-		TranslateModelMatrix(glm::vec3(0.0f, 0.0f, -1.0f));
+	// Draw legs to the left and down the Z axis
+	for(float x = -16.0f; x > -112.0f; x += -64.0f)
+	{
+		for(float z = -40.0f; z > -136.0f; z += -80.0f)
+		{
+			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+				TranslateModelMatrix(glm::vec3(x, -16.0f, z));
+				generic_shader->UpdateUniformModel(MatrixStack.top());
+				cube->DrawCube();
+			MatrixStack.pop();
+		}
+	}
+}
+
+void CORE::DrawCube()
+{
+	cube->BindObject(0);
+
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-16.0f, 0.0f, -50.0f));
 		generic_shader->UpdateUniformModel(MatrixStack.top());
-
-		ScaleModelMatrix(glm::vec3(1.0f, 1.0f, -1.0f));
-		generic_shader->UpdateUniformModel(MatrixStack.top());
-		
-		generic_shader->ChangeUniformColor(0.3f, 0.3f, 0.3f);	
 		cube->DrawCube();
-		generic_shader->ChangeUniformColor(1.0f, 1.0f, 1.0f);
-	
-	glDisable(GL_STENCIL_TEST);
-}
+	MatrixStack.pop();
 
-
-void CORE::DrawBeams(glm::mat4 ModelMatrix)
-{
-	// Center Beam
-	for(float x = -1; x < 2; x++)
-	{
-		MatrixStack.push(ModelMatrix);
-			TranslateModelMatrix(glm::vec3(0.0f, x, 0.0f));
-			generic_shader->UpdateUniformModel(MatrixStack.top());
-			cube->DrawCube();
-		MatrixStack.pop();
-	}
-	
-	// Draw beams to the right 
-	for(float x = 1; x < 4; x++)
-	{
-		for(float y = -1; y < 2; y++)
-		{
-			MatrixStack.push(ModelMatrix);
-				TranslateModelMatrix(glm::vec3(x, y, 0.0f));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				cube->DrawCube();
-			MatrixStack.pop();
-		}
-	}
-
-	// Draw beams to the left
-	for(float x = -1; x > -4; x--)	
-	{
-		for(float y = -1; y < 2; y++)
-		{
-			MatrixStack.push(ModelMatrix);
-				TranslateModelMatrix(glm::vec3(x, y, 0.0f));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				cube->DrawCube();
-			MatrixStack.pop();
-		}
-	}
-}
-
-void CORE::DrawLegs(glm::mat4 ModelMatrix)
-{
-	// Draw legs to the right
-	for(float x = 1; x < 4; x+=2)
-	{
-		for(float y = -1; y < 2; y+=2)
-		{
-			MatrixStack.push(ModelMatrix);
-				TranslateModelMatrix(glm::vec3(x, y, -1.0f));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				cube->DrawCube();
-			MatrixStack.pop();
-		}
-	}
-
-	for(float x = -1; x > -4; x-=2)
-	{
-		for(float y = -1; y < 2; y+=2)
-		{
-			MatrixStack.push(ModelMatrix);
-				TranslateModelMatrix(glm::vec3(x, y, -1.0f));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				cube->DrawCube();
-			MatrixStack.pop();
-		}
-	}
-}
-
-void CORE::DisplayScene()
-{
-	generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.ViewMatrix, camera->DefaultCameraMatrix.ProjectionMatrix);	
-
-	glm::mat4 ModelMatrix;
-
-	MatrixStack.push(ModelMatrix);
-
-	//glEnable(GL_STENCIL_TEST);
-	//utils->CheckErrors("glEnable(GL_STENCIL_TEST)");
-
-		/*glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		glStencilMask(0xFF);
-		glDepthMask(GL_FALSE);
-		glClear(GL_STENCIL_BUFFER_BIT);
-		*/
-
-		cube->BindObject(0);
-
-		/*		
-		glStencilFunc(GL_EQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDepthMask(GL_TRUE);	
-		*/
-
-		generic_shader->ChangeUniformColor(0.3f, 0.6f, 0.2f);	
-
-		RotateModelMatrix(0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(16.0f, 0.0f, -50.0f));
 		generic_shader->UpdateUniformModel(MatrixStack.top());
+		cube->DrawCube();
+	MatrixStack.pop();
 
-		DrawBeams(ModelMatrix);
-		DrawLegs(ModelMatrix);
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-16.0f, 32.0f, -50.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		cube->DrawCube();
+	MatrixStack.pop();
 
-	//glDisable(GL_STENCIL_TEST);
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(16.0f, 32.0f, -50.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		cube->DrawCube();
+	MatrixStack.pop();
+}
+
+void CORE::DisplayScene(const float _Interpolation)
+{
+
+	//generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP + _Interpolation);	
+	generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+
+		//DrawCube(); // Test to see if everything is ok
+		
+		// Bridge
+		DrawBeams();
+		DrawLegs();
 
 	MatrixStack.pop();
 }
 
-CORE::WindowEvents CORE::ProcessEvent()
+void CORE::ProcessEvent()
 {
-	WindowEvents windowEvent = (WindowEvents)sdl_context->ProcessEvent();
 
-	switch(windowEvent)
+	float x, y;
+
+	switch(Event)
 	{
 		case ESC:
-			return ESC;
-		case ONE:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			return ONE;
-		case TWO:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			return TWO;
-		case FIVE:
-			camera->SetDefaultCamera();
-			return FIVE;
+				std::cout << "[DEBUG] Event: ESC" << std::endl;
+			break;
+		case MOUSE:
+
+				x = sdl_context->GetMouseRelX();
+				y = sdl_context->GetMouseRelY();
+
+				std::cout << "[DEBUG] X: " << x << std::endl;
+				std::cout << "[DEBUG] Y: " << y << std::endl;
+
+				camera->MoveMouseCamera(x, y, 1);
+
+				camera->ComputeVectors();	
+			break;
+		case W:
+				camera->MoveCameraForward(1);
+				
+				std::cout << "[DEBUG] CameraEvent: W" << std::endl;
+			break;
+		case S:
+				camera->MoveCameraBackward(1);
+				
+				std::cout << "[DEBUG] CameraEvent: S" << std::endl;
+			break;
 		case A:
-			camera->RotateCameraLeft();
-			return A;
+				camera->StrafeCameraRight(1);
+				
+				std::cout << "[DEBUG] CameraEvent: A" << std::endl;
+			break;
 		case D:
-			camera->RotateCameraRight();
-			return D;
-		default:
-			return NOEVENT;
+				camera->StrafeCameraLeft(1);
+
+				std::cout << "[DEBUG] CameraEvent: D" << std::endl;
+			break;
+		case ONE:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				std::cout << "[DEBUG] Event: ONE" << std::endl;
+			break;
+		case TWO:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				std::cout << "[DEBUG] Event: TWO" << std::endl;
+			break;
+		case FIVE:
+				if(Running == true)
+				{
+					Running = false;
+					Time = 0;
+				}
+				else
+				{
+					Running = true;
+					Time = sdl_context->GetTime();
+				}
+
+				std::cout << "[DEBUG] Event: FIVE" << std::endl;
+			break;
+		case Q:
+			break;
+		case E:
+			break;
+		case RIGHT:
+			break;
+		case LEFT:
+			break;
+		case NOEVENT:
+			break;
+
 	}	
+
+	sdl_context->CenterMouse(SDLWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
+	camera->UpdateDefaultCamera();
+}
+
+void CORE::ProcessCameraEvent()
+{
 }
 
 int CORE::InitSDL()
@@ -277,22 +317,35 @@ void CORE::CleanUp()
 
 int CORE::MainLoop()
 {
-	WindowEvents event = NOEVENT;
+	sdl_context->CenterMouse(SDLWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
+	camera->SetDefaultCamera();
 
-	InitScene();
+	NextGameTick = sdl_context->GetTime();
 
-	while( event != ESC )
+	while(Event != ESC)
 	{
-		utils->CheckErrors("MainLoop()");	
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
+		Event = (WindowEvents)sdl_context->ProcessEvent();
+
+		Loops = 0;
+		while(sdl_context->GetTime() > NextGameTick && Loops < MAX_FRAMESKIP && Event != ESC)
+		{
+			ProcessEvent();	
+
+			NextGameTick += SKIP_UPDATES;
+			Loops++;
+		}
+
+		camera->UpdateMVP();
+
+		Interpolation = float(sdl_context->GetTime() + SKIP_UPDATES - NextGameTick) / float(SKIP_UPDATES);
+
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		event = ProcessEvent();	
-		if( event != NOEVENT )
-			std::cout << "[DEBUG] " << event << std::endl;
+		DisplayScene(Interpolation);
 
-		DisplayScene();
+		utils->CheckErrors("MainLoop()");	
 
 		sdl_context->ClearWindow(SDLWindow);
 	}

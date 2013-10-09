@@ -1,9 +1,8 @@
 
 #include "../headers/objects.h"
 
-// Cube 
-const float CubeVertices[] = { 
-
+// 0.5x0.5 Cube 
+const float DotFiveXDotFiveCubeVertices[] = { 
 //	 X	Y     Z     R     G	B     U     V	
 	-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
@@ -49,6 +48,98 @@ const float CubeVertices[] = {
 
 };
 
+//  16x16x16 Cube 
+const float SixteenXSixteenXSixteenCubeVertices[] = { 
+//	 X	Y     	 Z      R     G	    B     U     V	
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+
+	-16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+
+	-16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-16.0f, -16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-16.0f, -16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+
+	-16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-16.0f,  16.0f,  16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-16.0f,  16.0f, -16.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f
+};
+
+// 8x32x8 Rectangle
+const float EightXThirtyTwoXEightRectangleVertices[] = { 
+//	 X	Y     	 Z      R     G	    B     U     V	
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+
+	-8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+
+	-8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	-8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-8.0f, -32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-8.0f, -32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+
+	-8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f,
+	 8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 1.0f,
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	 8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //1.0f, 0.0f,
+	-8.0f,  32.0f,  8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 0.0f,
+	-8.0f,  32.0f, -8.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f
+};
+
 const float FloorVertices[] = {
 	
 	// floor
@@ -78,17 +169,17 @@ void OBJECTS::InitBuffers()
 	glGenVertexArrays(2, VAOArray);
 
 	//*******************************************//
-	//		Cube Buffer		     //
+	//	16x16x16 Cube Buffer		     //
 	//*******************************************//
 	glBindVertexArray(VAOArray[0]);	
-	glGenBuffers( 1, &vbo);
-	glBindBuffer( GL_ARRAY_BUFFER, vbo);
-	glBufferData( GL_ARRAY_BUFFER, sizeof( CubeVertices ), CubeVertices, GL_STATIC_DRAW );
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(SixteenXSixteenXSixteenCubeVertices), SixteenXSixteenXSixteenCubeVertices, GL_STATIC_DRAW);
 
 	// Linking vertex data and vertex array attributes
-	glEnableVertexAttribArray( 0 );	
+	glEnableVertexAttribArray(0);	
 	//utils->CheckErrors("glEnableVertexAttribArray( index = 0 )");
-	glEnableVertexAttribArray( 1 );
+	glEnableVertexAttribArray(1);
 	//utils->CheckErrors("glEnableVertexAttribArray( index = 1 )");
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
@@ -96,26 +187,24 @@ void OBJECTS::InitBuffers()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)( 3*sizeof(float)));
 	//utils->CheckErrors("glVertexAttribPointer( index = 1 )");
 
-
 	//*******************************************//
-	//		Floor Buffer		     //
+	//	8x24x8 Rectangle Buffer		     //
 	//*******************************************//
 	glBindVertexArray(VAOArray[1]);	
-	glGenBuffers( 1, &vbo);
-	glBindBuffer( GL_ARRAY_BUFFER, vbo);
-	glBufferData( GL_ARRAY_BUFFER, sizeof( FloorVertices ), FloorVertices, GL_STATIC_DRAW );
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(EightXThirtyTwoXEightRectangleVertices), EightXThirtyTwoXEightRectangleVertices, GL_STATIC_DRAW);
 
 	// Linking vertex data and vertex array attributes
-	glEnableVertexAttribArray( 0 );	
+	glEnableVertexAttribArray(0);	
 	//utils->CheckErrors("glEnableVertexAttribArray( index = 0 )");
-	glEnableVertexAttribArray( 1 );
+	glEnableVertexAttribArray(1);
 	//utils->CheckErrors("glEnableVertexAttribArray( index = 1 )");
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
 	//utils->CheckErrors("glVertexAttribPointer( index = 0 )");
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)( 3*sizeof(float)));
 	//utils->CheckErrors("glVertexAttribPointer( index = 1 )");
-
 }
 
 

@@ -25,18 +25,27 @@ class SHADER_PROGRAM
 		SHADER_PROGRAM();
 		~SHADER_PROGRAM();
 
-		int		InitGenericShaders();
+		struct Color
+		{
+			float r;
+			float g;
+			float b;
+		};
 
-		void		UseShaderProgram(const glm::mat4 ViewMatrix, const glm::mat4 ProjectionMatrix);
 
-		void		UpdateUniformModel(glm::mat4 temp_ModelMatrix);
+		int	InitGenericShaders();
 
-		void		ChangeUniformColor(const float r, const float g, const float b);
+		void	UseShaderProgram(const glm::mat4 MVP);
+
+		void	UpdateUniformModel(const glm::mat4 MVP);
+
+		void	ChangeUniformColor(float r, float g, float b);
+
+		float	ConvertColor(float rgb);
 
 	private:
 
 		GLuint		ShaderProgram;
-
 
 		int		DebugShaderProgram(GLint status);
 

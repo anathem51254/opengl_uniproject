@@ -16,7 +16,9 @@
 #include <cmath>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/constants.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 class CAMERA
@@ -29,12 +31,31 @@ class CAMERA
 
 		struct CameraMatrix 
 		{
+			glm::mat4 IdentityMatrix;
 			glm::mat4 ViewMatrix;
 			glm::mat4 ProjectionMatrix;
+			glm::mat4 MVP;
 		};
 
 		CameraMatrix 	DefaultCameraMatrix;
+		CameraMatrix	FPSCameraMatrix;
 
+		void		UpdateDefaultCamera();
+
+		void		SetFPSCamera();
+
+		void		MoveMouseCamera(const float x, const float y, const float DeltaTime);
+
+		void		StrafeCameraRight(const float DeltaTime);
+		void		StrafeCameraLeft(const float DeltaTime);
+		void		MoveCameraForward(const float DeltaTime);
+		void		MoveCameraBackward(const float DeltaTime);
+
+
+		void 		ComputeVectors();
+
+		void		UpdateMVP();
+		
 
 		void 		SetDefaultCamera();
 		void		RotateCameraLeft();
@@ -51,7 +72,20 @@ class CAMERA
 		float 		NearPlane;
 		float 		FarPlane;
 
+		float		Speed;
+
+		float		MouseSensitivity;
+
 		float 		CameraAngle;
+
+		float 		Horizontal;
+		float 		Vertical;
+
+		glm::vec3	RightVector;
+		glm::vec3	PositionVector;
+		glm::vec3	DirectionVector;
+		glm::vec3	UpVector;
+
 
 };
 

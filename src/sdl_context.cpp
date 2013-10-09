@@ -22,6 +22,8 @@ SDL_Window* SDL_CONTEXT::CreateSDLWindow(std::string title, int WINDOW_WIDTH, in
 	if( SDLWindow == nullptr )
 		throw std::runtime_error("[DEBUG] Failed to Create Window");
 
+	//SDL_SetWindowFullscreen(SDLWindow, SDL_WINDOW_FULLSCREEN);
+
 	return SDLWindow;
 }
 
@@ -34,7 +36,8 @@ SDL_GLContext SDL_CONTEXT::CreateGLContext(SDL_Window* SDLWindow)
 		std::cout << "[DEBUG] GLContext: " << GLContext << std::endl;
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	//SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	
 
 	return GLContext;
 }
@@ -44,41 +47,87 @@ void SDL_CONTEXT::ClearWindow(SDL_Window* SDLWindow)
 	SDL_GL_SwapWindow(SDLWindow);
 }
 
+unsigned int SDL_CONTEXT::GetTime()
+{
+	return SDL_GetTicks();
+}
+
+void SDL_CONTEXT::CenterMouse(SDL_Window* SDLWindow, int width, int height)
+{
+	SDL_WarpMouseInWindow(SDLWindow, width / 2, height / 2);
+}
+
+float SDL_CONTEXT::GetMouseRelX()
+{
+	return SDLEvent.motion.x;
+}
+
+float SDL_CONTEXT::GetMouseRelY()
+{
+	return SDLEvent.motion.y;
+}	
+
 SDL_CONTEXT::WindowEvents SDL_CONTEXT::ProcessEvent()
 {	
 		WindowEvents winEvent = NOEVENT;
 	
-		SDL_Event sdl_Event;
-
-		if(SDL_PollEvent(&sdl_Event))
+		if(SDL_PollEvent(&SDLEvent))
 		{
-				if(sdl_Event.type == SDL_QUIT)
+				if(SDLEvent.type == SDL_QUIT)
 				{
 					winEvent = ESC;
 				}
-				else if (sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_ESCAPE)
+				else if (SDLEvent.key.keysym.sym == SDLK_ESCAPE)
 				{
 					winEvent = ESC;
 				}
-				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_1)
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_1)
 				{
 					winEvent = ONE;
 				}
-				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_2)
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_2)
 				{
 					winEvent = TWO;
 				}
-				else if( sdl_Event.type == SDL_KEYUP && sdl_Event.key.keysym.sym == SDLK_5)
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_5)
 				{
 					winEvent = FIVE;
 				}
-				else if(sdl_Event.key.keysym.sym == SDLK_a)
+				else if(SDLEvent.type == SDL_MOUSEMOTION)
+				{
+					winEvent = MOUSE;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_w)
+				{
+					winEvent = W;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_s)
+				{
+					winEvent = S;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_a)
 				{
 					winEvent = A;
 				}
-				else if(sdl_Event.key.keysym.sym == SDLK_d)
+				else if(SDLEvent.key.keysym.sym == SDLK_d)
 				{
 					winEvent = D;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_q)
+				{
+					winEvent = Q;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_e)
+				{
+					winEvent = E;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_LEFT)
+				{
+					winEvent = LEFT;
+				}
+				else if(SDLEvent.key.keysym.sym == SDLK_RIGHT)
+				{
+					winEvent = RIGHT;
 				}
 				else
 					winEvent = NOEVENT;

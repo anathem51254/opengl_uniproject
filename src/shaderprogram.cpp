@@ -5,11 +5,11 @@ GLint 		uniModel;
 GLint 		uniView;
 GLint 		uniProj;
 GLint 		uniColor;
+GLint 		uniMVP;
 
 unsigned int 	ShaderNumber = 2;
 
 GLuint 		Shaders[2];
-
 
 // Shaders
 const 	std::string GenericVertexShaderSource(
@@ -17,13 +17,15 @@ const 	std::string GenericVertexShaderSource(
 	"layout(location = 0) in vec3 position;\n"
 	"layout(location = 1) in vec3 color;\n"
 	"out vec3 Color;\n"
-	"uniform mat4 modelMatrix;\n"
-	"uniform mat4 viewMatrix;\n"
-	"uniform mat4 projMatrix;\n"
+	//"uniform mat4 modelMatrix;\n"
+	//"uniform mat4 viewMatrix;\n"
+	//"uniform mat4 projMatrix;\n"
+	"uniform mat4 MVP;\n"
 	"uniform vec3 overrideColor;\n"
 	"void main() {\n"
 		"Color = overrideColor * color;\n"
-		"gl_Position = projMatrix * viewMatrix * modelMatrix * vec4( position, 1.0f );\n"
+		//"gl_Position = projMatrix * viewMatrix * modelMatrix * vec4( position, 1.0f );\n"
+		"gl_Position = MVP * vec4( position, 1.0f );\n"
 	"}\n"
 );	
 
@@ -74,22 +76,33 @@ int SHADER_PROGRAM::DebugShaderProgram(GLint status)
 	return 0;
 }
 
-void SHADER_PROGRAM::UpdateUniformModel(glm::mat4 temp_modelMatrix)
+void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP)
 {
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
+	//glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
+	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
 }
 
-void SHADER_PROGRAM::ChangeUniformColor(const float r, const float g, const float b)
+float SHADER_PROGRAM::ConvertColor(float rgb)
 {
+	return rgb / 255.0f;
+}
+
+void SHADER_PROGRAM::ChangeUniformColor(float r, float g, float b)
+{
+	r /= 255.0f;
+	g /= 255.0f;
+	b /= 255.0f;
 	glUniform3f(uniColor, r, g, b);
 }
 
-void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 ViewMatrix, const glm::mat4 ProjectionMatrix)
+void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP)
 {
 	glUseProgram(ShaderProgram);
 
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
+	
 }
 
 GLuint SHADER_PROGRAM::CreateShader( const std::string &shaderSource, GLenum eShaderType )
