@@ -58,6 +58,13 @@ class CAMERA
 		
 
 		void 		SetDefaultCamera();
+
+		void		FaceCameraRight();
+		void		FaceCameraLeft();
+		void		FaceCameraFront();
+		void		FaceCameraBack();
+
+
 		void		RotateCameraLeft();
 		void 		RotateCameraRight();
 		void		RotateCameraAngle(const float CameraAngle);

@@ -30,20 +30,36 @@ class OBJECTS
 		OBJECTS();
 		~OBJECTS();
 
-		GLuint VAOArray[2];
+		GLuint VAOArray[6];
 
 		GLuint CurrentVao;
 
-		void InitBuffers();
+		void BuildObjects();
 
 		void BindObject(const int vao); 
 
 		void DrawCube();
 
+		void DrawCylinder();
+
 		void DrawFloor();
 
 	private:
+		
+		GLuint vbo;
 
+		void InitBuffers();
+
+		void AddObjectToVAO(const int vao, const float ObjectVectices[]);
+
+		template <size_t N>
+		void AddObjectToVAO(const int vao, const float (&ObjectVectices)[N]);
+
+		template <size_t N>
+		void GenCylinder(const float Radius, const float Height, const int Resolution, float (&Cylinder)[N]);
+
+		template <size_t N>
+		void GenCube(const float Width, const float Height, const float Depth, float (&Cube)[N]);
 
 };
 

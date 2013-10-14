@@ -93,6 +93,18 @@ SDL_CONTEXT::WindowEvents SDL_CONTEXT::ProcessEvent()
 				{
 					winEvent = FIVE;
 				}
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_6)
+				{
+					winEvent = SIX;
+				}
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_7)
+				{
+					winEvent = SEVEN;
+				}
+				else if( SDLEvent.type == SDL_KEYUP && SDLEvent.key.keysym.sym == SDLK_8)
+				{
+					winEvent = EIGHT;
+				}
 				else if(SDLEvent.type == SDL_MOUSEMOTION)
 				{
 					winEvent = MOUSE;

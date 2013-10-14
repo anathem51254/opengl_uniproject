@@ -49,7 +49,7 @@ class CORE
 
 		SHADER_PROGRAM *generic_shader;
 
-		OBJECTS *cube;
+		OBJECTS *objects;
 
 
 		SDL_GLContext GLContext;
@@ -75,6 +75,9 @@ class CORE
 			ONE, 
 			TWO,
 			FIVE,
+			SIX,
+			SEVEN,
+			EIGHT,
 			MOUSE,
 			W,
 			S,
@@ -85,6 +88,14 @@ class CORE
 			RIGHT,
 			LEFT
 		}; 
+
+		enum 	Scenes
+		{
+			TEST,
+			BRIDGE
+		};
+
+		Scenes Scene;
 
 		WindowEvents Event;
 		WindowEvents CameraEvent;
@@ -111,10 +122,14 @@ class CORE
 
 		void	RotateModelMatrix(const float angle, glm::vec3 const vec);
 
+		void	DrawRails();
 		void	DrawBeams();
 		void	DrawLegs();
+		void 	DrawLampPole();
+		void	DrawLamp();
 
 		void 	DrawCube();
+		void 	DrawCylinder();
 
 		void	DisplayScene(const float);
 		
