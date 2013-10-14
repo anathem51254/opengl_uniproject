@@ -50,8 +50,6 @@ class OBJECTS
 
 		void InitBuffers();
 
-		void AddObjectToVAO(const int vao, const float ObjectVectices[]);
-
 		template <size_t N>
 		void AddObjectToVAO(const int vao, const float (&ObjectVectices)[N]);
 
