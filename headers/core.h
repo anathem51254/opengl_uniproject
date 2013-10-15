@@ -121,7 +121,8 @@ class CORE
 		void	ScaleModelMatrix(glm::vec3 const vec);
 
 		void	RotateModelMatrix(const float angle, glm::vec3 const vec);
-
+		
+		void	DrawFloor();
 		void	DrawRails();
 		void	DrawBeams();
 		void	DrawLegs();
@@ -130,6 +131,9 @@ class CORE
 
 		void 	DrawCube();
 		void 	DrawCylinder();
+		void 	DrawHalfCylinder();
+		void 	DrawCone();
+		void 	DrawCircle();
 
 		void	DisplayScene(const float);
 		

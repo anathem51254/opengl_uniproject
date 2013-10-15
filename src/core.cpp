@@ -102,168 +102,193 @@ void CORE::DrawBeams()
 
 	generic_shader->ChangeUniformColor(255.0f, 206.0f, 153.0f);	
 
-	// Draw 4 beams to the right and down the Z axis
-	for(float x = 16.0f; x < 128.0f; x += 32.0f)
+	for(float x = 4.0f; x < 128.0f; x += 8.0f)
 	{
-		//for(float z = -48.0f; z > -144.0f; z += -32.0f)
-		//{
-		//
-		float z = -80.0f;
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 24.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		//}
+		float z = -40.0f;
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 76.0f, z));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
 	}
 
-	// Draw 3 beams to the left and down the Z axis
-	for(float x = -16.0f; x > -128.0f; x += -32.0f)
+	for(float x = -4.0f; x > -128.0f; x += -8.0f)
 	{
-		//for(float z = -48.0f; z > -144.0f; z += -32.0f)
-		//{
-		float z = -80.0f;
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 24.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		//}
+		float z = -40.0f;
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 76.0f, z));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
 	}
 }
 
 void CORE::DrawLegs()
 {
-	objects->BindObject(1);
+	objects->BindObject(2);
 
 	generic_shader->ChangeUniformColor(200.0f, 150.0f, 100.0f);	
 
-	// Draw legs to the right and down the Z axis
 	for(float x = 32.0f; x < 128.0f; x += 64.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, -16.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_ONE();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_TWO();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_THREE();
+		MatrixStack.pop();
+
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_ONE();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_TWO();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_THREE();
+		MatrixStack.pop();
 	}
 
-	// Draw legs to the left and down the Z axis
 	for(float x = -32.0f; x > -128.0f; x += -64.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, -16.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_ONE();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_TWO();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -16.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_THREE();
+		MatrixStack.pop();
+
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_ONE();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_TWO();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 0.0f, -64.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawLegs_THREE();
+		MatrixStack.pop();
 	}
 }
 
 void CORE::DrawRails()
 {
-	objects->BindObject(2);
+	objects->BindObject(1);
 
 	generic_shader->ChangeUniformColor(200.0f, 150.0f, 100.0f);	
 
-	// Draw 4 beams to the right and down the Z axis
 	for(float x = 16.0f; x < 128.0f; x += 32.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 36.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 82.0f, 10.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 82.0f, -90.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
 	}
 
-	// Draw 3 beams to the left and down the Z axis
 	for(float x = -16.0f; x > -128.0f; x += -32.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 36.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 82.0f, 10.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
+
+		MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+			TranslateModelMatrix(glm::vec3(x, 82.0f, -90.0f));
+			generic_shader->UpdateUniformModel(MatrixStack.top());
+			objects->DrawCube();
+		MatrixStack.pop();
 	}
 }
 
 void CORE::DrawLampPole()
 {
-	objects->BindObject(3);
-
-	generic_shader->ChangeUniformColor(200.0f, 150.0f, 100.0f);	
-
-	// Draw legs to the right and down the Z axis
-	for(float x = 32.0f; x < 128.0f; x += 64.0f)
-	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 72.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
-	}
-
-	// Draw legs to the left and down the Z axis
-	for(float x = -32.0f; x > -128.0f; x += -64.0f)
-	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
-		{
-			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 72.0f, z));
-				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
-			MatrixStack.pop();
-		}
-	}
 }
 
 void CORE::DrawLamp()
 {
-	objects->BindObject(4);
+}
 
-	generic_shader->ChangeUniformColor(255.0f, 206.0f, 153.0f);	
+void CORE::DrawFloor()
+{
+	objects->BindObject(3);
 
-	// Draw legs to the right and down the Z axis
-	for(float x = 38.0f; x < 128.0f; x += 64.0f)
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	for(float x = 0.0f; x < 256.0f; x += 16.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
+		for(float z = 54.0f; z > -256.0f; z += -16.0f)
 		{
 			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 102.0f, z));
+				TranslateModelMatrix(glm::vec3(x, 0.0f, z));
+				ScaleModelMatrix(glm::vec3(16.0f, 0.0f, 16.0f));
 				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
+				objects->DrawSquare();
 			MatrixStack.pop();
 		}
 	}
-
-	// Draw legs to the left and down the Z axis
-	for(float x = -26.0f; x > -128.0f; x += -64.0f)
+	
+	for(float x = 0.0f; x > -256.0f; x -= 16.0f)
 	{
-		for(float z = -26.0f; z > -136.0f; z += -108.0f)
+		for(float z = 54.0f; z > -256.0f; z += -16.0f)
 		{
 			MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-				TranslateModelMatrix(glm::vec3(x, 102.0f, z));
+				TranslateModelMatrix(glm::vec3(x, 0.0f, z));
+				ScaleModelMatrix(glm::vec3(16.0f, 0.0f, 16.0f));
 				generic_shader->UpdateUniformModel(MatrixStack.top());
-				objects->DrawCube();
+				objects->DrawSquare();
 			MatrixStack.pop();
 		}
 	}
 }
 
+// TEST
 void CORE::DrawCube()
 {
 	objects->BindObject(0);
@@ -271,38 +296,71 @@ void CORE::DrawCube()
 	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
 
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(-16.0f, 0.0f, -50.0f));
-		generic_shader->UpdateUniformModel(MatrixStack.top());
-		objects->DrawCube();
-	MatrixStack.pop();
-
-	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(16.0f, 0.0f, -50.0f));
-		generic_shader->UpdateUniformModel(MatrixStack.top());
-		objects->DrawCube();
-	MatrixStack.pop();
-
-	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(-16.0f, 32.0f, -50.0f));
-		generic_shader->UpdateUniformModel(MatrixStack.top());
-		objects->DrawCube();
-	MatrixStack.pop();
-
-	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(16.0f, 32.0f, -50.0f));
+		TranslateModelMatrix(glm::vec3(0.0, 0.0f, -50.0f));
 		generic_shader->UpdateUniformModel(MatrixStack.top());
 		objects->DrawCube();
 	MatrixStack.pop();
 }
 
+void CORE::DrawHalfCylinder()
+{
+	objects->BindObject(4);
+
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-40.0f, 0.0f, -10.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		objects->DrawHalfCylinder_ONE();
+	MatrixStack.pop();
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-40.0f, 0.0f, -10.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		objects->DrawHalfCylinder_TWO();
+	MatrixStack.pop();
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-40.0f, 0.0f, -10.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		objects->DrawHalfCylinder_THREE();
+	MatrixStack.pop();
+}
+
 void CORE::DrawCylinder()
+{
+	objects->BindObject(4);
+
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(-40.0f, 0.0f, -10.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		objects->DrawCylinder();
+	MatrixStack.pop();
+}
+
+void CORE::DrawCircle()
 {
 	objects->BindObject(5);
 
 	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
 
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(0.0f, 0.0f, -10.0f));
+		TranslateModelMatrix(glm::vec3(20.0f, 0.0f, -10.0f));
+		generic_shader->UpdateUniformModel(MatrixStack.top());
+		objects->DrawCircle();
+	MatrixStack.pop();
+}
+
+void CORE::DrawCone()
+{
+	objects->BindObject(6);
+
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(40.0f, 0.0f, -10.0f));
 		generic_shader->UpdateUniformModel(MatrixStack.top());
 		objects->DrawCylinder();
 	MatrixStack.pop();
@@ -318,15 +376,17 @@ void CORE::DisplayScene(const float _Interpolation)
 		if(Scene == TEST)
 		{
 			//DrawCube(); // Test to see if everything is ok
-			DrawCylinder();
+			//DrawCylinder();
+			DrawHalfCylinder();
+			//DrawCone();
+			//DrawCircle();
 		}
 		else if(Scene == BRIDGE)
 		{
+			DrawFloor();
 			DrawBeams();
 			DrawLegs();
 			DrawRails();
-			DrawLampPole();
-			DrawLamp();
 		}
 
 	MatrixStack.pop();
@@ -455,7 +515,7 @@ void CORE::CleanUp()
 int CORE::MainLoop()
 {
 
-	Scene = BRIDGE;
+	Scene = TEST;
 
 	sdl_context->CenterMouse(SDLWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
 	camera->FaceCameraFront();

@@ -30,7 +30,7 @@ class OBJECTS
 		OBJECTS();
 		~OBJECTS();
 
-		GLuint VAOArray[6];
+		GLuint VAOArray[7];
 
 		GLuint CurrentVao;
 
@@ -42,7 +42,21 @@ class OBJECTS
 
 		void DrawCylinder();
 
-		void DrawFloor();
+		void DrawHalfCylinder_ONE();
+		void DrawHalfCylinder_TWO();
+		void DrawHalfCylinder_THREE();
+
+		void DrawLegs();
+
+		void DrawLegs_ONE();
+		void DrawLegs_TWO();
+		void DrawLegs_THREE();
+
+		void DrawCone();
+
+		void DrawCircle();
+
+		void DrawSquare();
 
 	private:
 		
@@ -55,6 +69,15 @@ class OBJECTS
 
 		template <size_t N>
 		void GenCylinder(const float Radius, const float Height, const int Resolution, float (&Cylinder)[N]);
+
+		template <size_t N>
+		void GenHalfCylinder(const float Radius, const float Height, const int Resolution, float (&Cylinder)[N]);
+
+		template <size_t N>
+		void GenCone(const float Radius, const float Height, const int Resolution, float (&Cone)[N]);
+
+		template <size_t N>
+		void GenCircle(const float Radius, const float Height, const int Resolution, float (&Circle)[N]);
 
 		template <size_t N>
 		void GenCube(const float Width, const float Height, const float Depth, float (&Cube)[N]);
