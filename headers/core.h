@@ -125,7 +125,12 @@ class CORE
 		void	DrawFloor();
 		void	DrawRails();
 		void	DrawBeams();
+		void	DrawUnderBeams();
 		void	DrawLegs();
+		void	DrawLegSupport();
+		void	DrawGateOne();
+		void	DrawGateTwo();
+
 		void 	DrawLampPole();
 		void	DrawLamp();
 
@@ -134,6 +139,7 @@ class CORE
 		void 	DrawHalfCylinder();
 		void 	DrawCone();
 		void 	DrawCircle();
+		void	DrawRectangle_ONE();
 
 		void	DisplayScene(const float);
 		

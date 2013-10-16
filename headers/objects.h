@@ -30,7 +30,7 @@ class OBJECTS
 		OBJECTS();
 		~OBJECTS();
 
-		GLuint VAOArray[7];
+		GLuint VAOArray[10];
 
 		GLuint CurrentVao;
 
@@ -46,11 +46,20 @@ class OBJECTS
 		void DrawHalfCylinder_TWO();
 		void DrawHalfCylinder_THREE();
 
+		void DrawUnderBeamRound_ONE();
+		void DrawUnderBeamRound_TWO();
+		void DrawUnderBeamRound_THREE();
+
 		void DrawLegs();
 
 		void DrawLegs_ONE();
 		void DrawLegs_TWO();
 		void DrawLegs_THREE();
+
+		void DrawLegSupport_ONE();
+		void DrawLegSupport_TWO();
+		void DrawLegSupport_THREE();
+
 
 		void DrawCone();
 

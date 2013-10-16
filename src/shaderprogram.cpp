@@ -7,9 +7,7 @@ GLint 		uniProj;
 GLint 		uniColor;
 GLint 		uniMVP;
 
-unsigned int 	ShaderNumber = 2;
-
-GLuint 		Shaders[2];
+std::array<GLuint, 3> Shaderprograms;
 
 // Shaders
 const 	std::string GenericVertexShaderSource(
@@ -38,18 +36,63 @@ const 	std::string GenericFragmentShaderSource(
 	"}\n"
 );
 
+const	std::string PhongVectexShaderSource(
+	"#version 430\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec3 normal;\n"
+	"uniform mat4 modelMatrix;\n"
+	"uniform mat4 viewMatrix;\n"
+	"uniform mat4 projMatrix;\n"
+	"out VS_OUT {\n"
+		"vec3 N;\n"
+		"vec3 L;\n"
+		"vec3 V;\n"
+	"} vs_out;\n"
+	"uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);\n"
+	"void main(void) {\n"
+		"vec4 P = modelMatrix * vec4(position, 1.0);\n"
+		"vs_out.N = mat3(modelMatrix) * normal;\n"
+		"vs_out.L = light_pos - P.xyz;\n"
+		"vs_out.V = -P.xyz;\n"
+		"gl_Position = projMatrix * P;\n"
+	"}\n"
+);
+
+const 	std::string PhongFragmentShaderSource(
+	"#version 430\n"
+	"layout(location = 0) out vec4 color;\n"
+	"in VS_OUT {\n"
+		"vec3 N;\n"
+		"vec3 L;\n"
+		"vec3 V;\n"
+	"} fs_in;\n"
+	"uniform vec3 diffuse_albedo = vec3(0.5, 0.2, 0.7);\n"
+	"uniform vec3 specular_albedo = vec3(0.5, 0.2, 0.7);\n"
+	"uniform float specular_power = 128.0;\n"
+	"void main(void) {\n"
+		"vec3 N = normalize(fs_in.N);\n"
+		"vec3 L = normalize(fs_in.L);\n"
+		"vec3 V = normalize(fs_in.V);\n"
+		"vec3 R = reflect(-L, N);\n"
+		"vec3 diffuse = max(dot(N, L), 0.0) * diffuse_albedo;\n"
+		"vec3 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_albedo;\n"
+		"color = vec4(diffuse + specular, 1.0);\n"
+	"}\n"
+);
+
 SHADER_PROGRAM::SHADER_PROGRAM()
 {
 }
 
 SHADER_PROGRAM::~SHADER_PROGRAM()
 {
-	glDeleteProgram(ShaderProgram);
+	glDeleteProgram(Shaderprograms[0]);
 
-	for(unsigned int i = 0; i < ShaderNumber; i++)
+	/*for(unsigned int i = 0; i < ShaderNumber; i++)
 	{
 		glDeleteShader(Shaders[i]);
 	}
+	*/
 }
 
 
@@ -95,9 +138,9 @@ void SHADER_PROGRAM::ChangeUniformColor(float r, float g, float b)
 	glUniform3f(uniColor, r, g, b);
 }
 
-void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP)
+void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP, int shader)
 {
-	glUseProgram(ShaderProgram);
+	glUseProgram(Shaderprograms[shader]);
 
 	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
@@ -142,28 +185,51 @@ GLuint SHADER_PROGRAM::CreateShader( const std::string &shaderSource, GLenum eSh
 	return shader;
 } 
 
-int SHADER_PROGRAM::InitGenericShaders()
+GLuint SHADER_PROGRAM::InitGenericShaders()
 {
-	int retn = 0;
-
-	Shaders[0] = CreateShader(GenericVertexShaderSource, GL_VERTEX_SHADER);
-	Shaders[1] = CreateShader(GenericFragmentShaderSource, GL_FRAGMENT_SHADER);
+	GLuint vert = CreateShader(GenericVertexShaderSource, GL_VERTEX_SHADER);
+	GLuint frag = CreateShader(GenericFragmentShaderSource, GL_FRAGMENT_SHADER);
 
 	ShaderProgram = glCreateProgram();
 	//utils->CheckErrors("glCreateProgram()");
 
-	for(unsigned int i = 0; i < ShaderNumber; i++)
-	{
-		glAttachShader(ShaderProgram, Shaders[i]);
-	}
+	glAttachShader(ShaderProgram, vert);
+	glAttachShader(ShaderProgram, frag);
 
 	GLint status = 0;
 
 	glLinkProgram(ShaderProgram);
-	retn = DebugShaderProgram(status);
+	DebugShaderProgram(status);
 
-	if(retn == 0)
-	{
+		uniModel = glGetUniformLocation(ShaderProgram, "modelMatrix");	
+		//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
+		uniView = glGetUniformLocation(ShaderProgram, "viewMatrix");
+		//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
+		uniProj = glGetUniformLocation(ShaderProgram, "projMatrix");
+		//utils->CheckErrors("glGetUniformLocation(projMatrix)");
+
+		uniColor = glGetUniformLocation(ShaderProgram, "color");
+		//utils->CheckErrors("glGetUniformLocation(overrideColor)");
+
+	return ShaderProgram;
+}
+
+GLuint SHADER_PROGRAM::InitPhongShaders()
+{
+	GLuint vert = CreateShader(PhongVectexShaderSource, GL_VERTEX_SHADER);
+	GLuint frag = CreateShader(PhongVectexShaderSource, GL_FRAGMENT_SHADER);
+
+	ShaderProgram = glCreateProgram();
+	//utils->CheckErrors("glCreateProgram()");
+
+	glAttachShader(ShaderProgram, vert);
+	glAttachShader(ShaderProgram, frag);
+
+	GLint status = 0;
+
+	glLinkProgram(ShaderProgram);
+	DebugShaderProgram(status);
+
 		uniModel = glGetUniformLocation(ShaderProgram, "modelMatrix");	
 		//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
 		uniView = glGetUniformLocation(ShaderProgram, "viewMatrix");
@@ -173,7 +239,12 @@ int SHADER_PROGRAM::InitGenericShaders()
 
 		uniColor = glGetUniformLocation(ShaderProgram, "overrideColor");
 		//utils->CheckErrors("glGetUniformLocation(overrideColor)");
-	}
 
-	return retn;
+	return ShaderProgram;
+}
+
+void SHADER_PROGRAM::BuildShaders()
+{
+	Shaderprograms[0] = InitGenericShaders();
+	Shaderprograms[1] = InitPhongShaders();
 }

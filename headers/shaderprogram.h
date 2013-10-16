@@ -33,15 +33,18 @@ class SHADER_PROGRAM
 		};
 
 
-		int	InitGenericShaders();
+		GLuint	InitGenericShaders();
+		GLuint	InitPhongShaders();
 
-		void	UseShaderProgram(const glm::mat4 MVP);
+		void	UseShaderProgram(const glm::mat4 MVP, const int shader);
 
 		void	UpdateUniformModel(const glm::mat4 MVP);
 
 		void	ChangeUniformColor(float r, float g, float b);
 
 		float	ConvertColor(float rgb);
+
+		void	BuildShaders();
 
 	private:
 

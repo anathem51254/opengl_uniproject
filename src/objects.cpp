@@ -453,13 +453,13 @@ void OBJECTS::AddObjectToVAO(const int vao, const float (&ObjectVectices)[N])
 
 void OBJECTS::BuildObjects()
 {
-	glGenVertexArrays(7, VAOArray);
+	glGenVertexArrays(10, VAOArray);
 
 	float Beams[216];
 	GenCube(4.0f, 2.0f, 48.0f, Beams);
 
 	float Rails[216];
-	GenCube(2.0f, 16.0f, 2.0f, Rails);
+	GenCube(2.0f, 12.0f, 2.0f, Rails);
 	
 	//float Legs[2340];
 	//GenCylinder(4.0f, 64.0f, 96.0f, Legs);
@@ -474,11 +474,21 @@ void OBJECTS::BuildObjects()
 	GenCone(10.0f, 50.0f, 5.0f, Cone);
 
 	float HalfCylinder[132];
-	GenHalfCylinder(4.0f, 50.0f, 4.0f, HalfCylinder);
+	GenHalfCylinder(4.0f, 32.0f, 4.0f, HalfCylinder);
 
 	float Circle[84];
 	GenCircle(10.0f, 50.0f, 5.0f, Circle);
 	
+	float UnderBeams[216];
+	GenCube(8.0f, 32.0f, 2.0f, UnderBeams);
+
+	float UnderBeamsRound[324];
+	GenHalfCylinder(8.0f, 32.0f, 12.0f, UnderBeamsRound);
+
+	float LegSupport[180];
+	GenCylinder(4.0f, 48.0f, 6.0f, LegSupport);
+
+
 
 	AddObjectToVAO(0, Beams);
 
@@ -488,11 +498,22 @@ void OBJECTS::BuildObjects()
 	
 	AddObjectToVAO(3, BaseSquareVectices);
 
+	// Rails
 	AddObjectToVAO(4, HalfCylinder);
 
+	// Not used primitives
 	AddObjectToVAO(5, Circle);
 
 	AddObjectToVAO(6, Cone);
+
+	// Under beams
+	AddObjectToVAO(7, UnderBeams);	
+
+	// Under beams round
+	AddObjectToVAO(8, UnderBeamsRound);	
+
+	// Leg Support
+	AddObjectToVAO(9, LegSupport);
 }
 
 
@@ -521,6 +542,22 @@ void OBJECTS::DrawLegs_TWO()
 void OBJECTS::DrawLegs_THREE()
 {
 	glDrawArrays(GL_TRIANGLE_STRIP, 100, 198);
+}
+
+
+void OBJECTS::DrawLegSupport_ONE()
+{
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+}
+
+void OBJECTS::DrawLegSupport_TWO()
+{
+	glDrawArrays(GL_TRIANGLE_FAN, 8, 16);
+}
+
+void OBJECTS::DrawLegSupport_THREE()
+{
+	glDrawArrays(GL_TRIANGLE_STRIP, 16, 30);
 }
 
 /* High Res
@@ -555,6 +592,20 @@ void OBJECTS::DrawHalfCylinder_THREE()
 }
 
 
+void OBJECTS::DrawUnderBeamRound_ONE()
+{
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 14);
+}
+
+void OBJECTS::DrawUnderBeamRound_TWO()
+{
+	glDrawArrays(GL_TRIANGLE_FAN, 14, 28);
+}
+
+void OBJECTS::DrawUnderBeamRound_THREE()
+{
+	glDrawArrays(GL_TRIANGLE_STRIP, 28, 54);
+}
 
 
 void OBJECTS::DrawCone()
