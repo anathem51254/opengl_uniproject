@@ -107,6 +107,8 @@ void CAMERA::UpdateMVP()
 {
 	DefaultCameraMatrix.IdentityMatrix 	= glm::mat4(1.0f);
 	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix * DefaultCameraMatrix.ViewMatrix * DefaultCameraMatrix.IdentityMatrix;
+
+	DefaultCameraMatrix.Normal		= glm::inverse(glm::transpose((DefaultCameraMatrix.IdentityMatrix * DefaultCameraMatrix.ViewMatrix)));
 }
 
 void CAMERA::SetDefaultCamera()
@@ -131,7 +133,7 @@ void CAMERA::FaceCameraRight()
 	Horizontal 		= (3*M_PI)/2.0f;
 	Vertical 		= (11.0f*M_PI)/6.0f;
 
-	PositionVector		= glm::vec3(200.0f, 40.0f, -80.0f);
+	PositionVector		= glm::vec3(300.0f, 80.0f, -80.0f);
 
 	DefaultCameraMatrix.ProjectionMatrix 	= glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
 	DefaultCameraMatrix.ViewMatrix 		= glm::lookAt(PositionVector, PositionVector + DirectionVector, UpVector);
@@ -147,7 +149,7 @@ void CAMERA::FaceCameraLeft()
 	Horizontal 		= M_PI/2.0f;
 	Vertical 		= (11.0f*M_PI)/6.0f;
 
-	PositionVector		= glm::vec3(-200.0f, 40.0f, -80.0f);
+	PositionVector		= glm::vec3(-300.0f, 80.0f, -80.0f);
 
 	DefaultCameraMatrix.ProjectionMatrix 	= glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
 	DefaultCameraMatrix.ViewMatrix 		= glm::lookAt(PositionVector, PositionVector + DirectionVector, UpVector);
@@ -162,7 +164,7 @@ void CAMERA::FaceCameraFront()
 	Horizontal 		= M_PI;
 	Vertical 		= (11.0f*M_PI)/6.0f;
 
-	PositionVector		= glm::vec3(0.0f, 40.0f, 100.0f);
+	PositionVector		= glm::vec3(0.0f, 150.0f, 100.0f);
 
 	DefaultCameraMatrix.ProjectionMatrix 	= glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
 	DefaultCameraMatrix.ViewMatrix 		= glm::lookAt(PositionVector, PositionVector + DirectionVector, UpVector);
@@ -177,12 +179,14 @@ void CAMERA::FaceCameraBack()
 	Horizontal 		= 0.0f;
 	Vertical 		= (11.0f*M_PI)/6.0f;
 
-	PositionVector		= glm::vec3(0.0f, 40.0f, -200.0f);
+	PositionVector		= glm::vec3(0.0f, 150.0f, -200.0f);
 
 	DefaultCameraMatrix.ProjectionMatrix 	= glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
 	DefaultCameraMatrix.ViewMatrix 		= glm::lookAt(PositionVector, PositionVector + DirectionVector, UpVector);
 
 	DefaultCameraMatrix.IdentityMatrix 	= glm::mat4(1.0f);
+
+	
 
 	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix * DefaultCameraMatrix.ViewMatrix * DefaultCameraMatrix.IdentityMatrix;
 }

@@ -33,12 +33,13 @@ class SHADER_PROGRAM
 		};
 
 
-		GLuint	InitGenericShaders();
+		void 	InitGenericShaders();
 		GLuint	InitPhongShaders();
 
-		void	UseShaderProgram(const glm::mat4 MVP, const int shader);
+		void	UseShaderProgram(const glm::mat4 MVP, const GLuint shader);
 
 		void	UpdateUniformModel(const glm::mat4 MVP);
+		void	UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 Normal);
 
 		void	ChangeUniformColor(float r, float g, float b);
 
@@ -48,9 +49,10 @@ class SHADER_PROGRAM
 
 	private:
 
-		GLuint		ShaderProgram;
+		GLuint		GenericShaderProgram;
+		GLuint		PhongShaderProgram;
 
-		int		DebugShaderProgram(GLint status);
+		int		DebugShaderProgram(GLint status, GLuint ShaderProg);
 
 		GLuint 		CreateShader(const std::string &shaderSource, GLenum eShaderType); 
 

@@ -27,6 +27,7 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_opengl.h"
 
+#include "bridgescene.h"
 #include "utils.h"
 #include "camera.h"
 #include "sdl_context.h"
@@ -50,7 +51,6 @@ class CORE
 		SHADER_PROGRAM *generic_shader;
 
 		OBJECTS *objects;
-
 
 		SDL_GLContext GLContext;
 

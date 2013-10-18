@@ -6,6 +6,7 @@ GLint 		uniView;
 GLint 		uniProj;
 GLint 		uniColor;
 GLint 		uniMVP;
+GLint		uniNormal;
 
 std::array<GLuint, 3> Shaderprograms;
 
@@ -36,6 +37,7 @@ const 	std::string GenericFragmentShaderSource(
 	"}\n"
 );
 
+/* From super bible - doesnt compile
 const	std::string PhongVectexShaderSource(
 	"#version 430\n"
 	"layout(location = 0) in vec3 position;\n"
@@ -57,7 +59,31 @@ const	std::string PhongVectexShaderSource(
 		"gl_Position = projMatrix * P;\n"
 	"}\n"
 );
+*/
 
+const	std::string PhongVectexShaderSource(
+	"#version 430\n"
+	"layout (location = 0) in vec3 position;\n"
+	"layout (location = 1) in vec3 normal;\n"
+	"layout (location = 2) in vec3 color;\n"
+	"uniform mat4 modelMatrix;\n"
+	"uniform mat4 viewMatrix;\n"
+	"uniform mat4 projMatrix;\n"
+	"uniform mat4 normalMatrix;\n"
+	"uniform vec3 overrideColor;\n"
+	"out vec4 vpeye;\n"
+	"out vec4 vneye;\n"
+	"out vec3 Color;\n"
+	"void main() {\n"
+		"Color = overrideColor * color;\n"
+		"vpeye = (modelMatrix * viewMatrix) * vec4(position, 1.0);\n"
+		"vneye = vec4((normalMatrix * vec4(normal, 0.0)));\n"
+		"gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);\n"
+	"}\n"
+);
+
+
+/* From super bible - doesnt compile
 const 	std::string PhongFragmentShaderSource(
 	"#version 430\n"
 	"layout(location = 0) out vec4 color;\n"
@@ -79,6 +105,32 @@ const 	std::string PhongFragmentShaderSource(
 		"color = vec4(diffuse + specular, 1.0);\n"
 	"}\n"
 );
+*/
+
+const 	std::string PhongFragmentShaderSource(
+	"#version 430\n"
+	"in vec4 vpeye;\n"
+	"in vec4 vneye;\n"
+	"in vec3 Color;\n"
+	"uniform vec4 lightPosition;\n"
+	"uniform vec4 kAmbient;\n"
+	"uniform vec4 kDiffuse;\n"
+	"uniform vec4 kSpecular;\n"
+	"uniform float nSpecularPow;\n"
+	"uniform vec4 diffuseColor;\n"
+	"layout (location = 0) out vec4 fragColor;\n"
+	"void main() {\n"
+		"vec4 n_eye = normalize(vneye);\n"
+		"vec4 s_eye = normalize(lightPosition - vpeye);\n"
+		"vec4 v_eye = normalize(-vpeye);\n"
+		"vec4 h_eye = normalize(v_eye + vneye);\n"
+		//vec4 r_eye = normalize(-s_eye, vneye);\n"
+		"vec4 Ia = vec4(0.1, 0.1, 0.1, 1) * kAmbient;\n"
+		"vec4 Id = diffuseColor * kDiffuse * max(dot(s_eye, n_eye), 0.0);\n"
+		"vec4 Is = vec4(1, 1, 1, 1) * kSpecular * pow(max(dot(h_eye, v_eye), 0), nSpecularPow);\n"
+		"fragColor = (Color, 1.0) * (Ia + Id + Is);\n"
+		"}\n"
+);
 
 SHADER_PROGRAM::SHADER_PROGRAM()
 {
@@ -87,6 +139,7 @@ SHADER_PROGRAM::SHADER_PROGRAM()
 SHADER_PROGRAM::~SHADER_PROGRAM()
 {
 	glDeleteProgram(Shaderprograms[0]);
+	glDeleteProgram(Shaderprograms[1]);
 
 	/*for(unsigned int i = 0; i < ShaderNumber; i++)
 	{
@@ -96,17 +149,17 @@ SHADER_PROGRAM::~SHADER_PROGRAM()
 }
 
 
-int SHADER_PROGRAM::DebugShaderProgram(GLint status)
+int SHADER_PROGRAM::DebugShaderProgram(GLint status, GLuint ShaderProg)
 {
-	glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &status);
+	glGetProgramiv(ShaderProg, GL_LINK_STATUS, &status);
 	if(status == GL_FALSE) {
 		std::cout << "[DEBUG] Linking Program [FAILED]\n" << std::endl;
 		
 		GLint infoLogLength;
-		glGetProgramiv(ShaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+		glGetProgramiv(ShaderProg, GL_INFO_LOG_LENGTH, &infoLogLength);
 
 		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-		glGetProgramInfoLog(ShaderProgram, infoLogLength, NULL, strInfoLog);
+		glGetProgramInfoLog(ShaderProg, infoLogLength, NULL, strInfoLog);
 
 		std::cout << "[DEBUG] Linking Program Log: \n\n" << strInfoLog << std::endl;
 
@@ -117,6 +170,16 @@ int SHADER_PROGRAM::DebugShaderProgram(GLint status)
 	std::cout << "[DEBUG] Linking Program [OK]\n" << std::endl;
 
 	return 0;
+}
+
+void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 normal)
+{
+	//glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
+	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, &MVP[1][1]);
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, &MVP[2][2]);
+	glUniformMatrix4fv(uniNormal, 1, GL_FALSE, &glm::mat3(normal)[0][0]);
 }
 
 void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP)
@@ -138,9 +201,10 @@ void SHADER_PROGRAM::ChangeUniformColor(float r, float g, float b)
 	glUniform3f(uniColor, r, g, b);
 }
 
-void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP, int shader)
+void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP, const GLuint shader)
 {
-	glUseProgram(Shaderprograms[shader]);
+	glUseProgram(GenericShaderProgram);
+	//glUseProgram(PhongShaderProgram);
 
 	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
@@ -185,66 +249,74 @@ GLuint SHADER_PROGRAM::CreateShader( const std::string &shaderSource, GLenum eSh
 	return shader;
 } 
 
-GLuint SHADER_PROGRAM::InitGenericShaders()
+void SHADER_PROGRAM::InitGenericShaders()
 {
 	GLuint vert = CreateShader(GenericVertexShaderSource, GL_VERTEX_SHADER);
 	GLuint frag = CreateShader(GenericFragmentShaderSource, GL_FRAGMENT_SHADER);
 
-	ShaderProgram = glCreateProgram();
+	GenericShaderProgram = glCreateProgram();
 	//utils->CheckErrors("glCreateProgram()");
 
-	glAttachShader(ShaderProgram, vert);
-	glAttachShader(ShaderProgram, frag);
+	glAttachShader(GenericShaderProgram, vert);
+	glAttachShader(GenericShaderProgram, frag);
 
 	GLint status = 0;
 
-	glLinkProgram(ShaderProgram);
-	DebugShaderProgram(status);
+	glLinkProgram(GenericShaderProgram);
+	DebugShaderProgram(status, GenericShaderProgram);
 
-		uniModel = glGetUniformLocation(ShaderProgram, "modelMatrix");	
+		uniModel = glGetUniformLocation(GenericShaderProgram, "modelMatrix");	
 		//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
-		uniView = glGetUniformLocation(ShaderProgram, "viewMatrix");
+		uniView = glGetUniformLocation(GenericShaderProgram, "viewMatrix");
 		//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
-		uniProj = glGetUniformLocation(ShaderProgram, "projMatrix");
+		uniProj = glGetUniformLocation(GenericShaderProgram, "projMatrix");
 		//utils->CheckErrors("glGetUniformLocation(projMatrix)");
 
-		uniColor = glGetUniformLocation(ShaderProgram, "color");
+		uniColor = glGetUniformLocation(GenericShaderProgram, "overrideColor");
 		//utils->CheckErrors("glGetUniformLocation(overrideColor)");
-
-	return ShaderProgram;
 }
 
 GLuint SHADER_PROGRAM::InitPhongShaders()
 {
 	GLuint vert = CreateShader(PhongVectexShaderSource, GL_VERTEX_SHADER);
-	GLuint frag = CreateShader(PhongVectexShaderSource, GL_FRAGMENT_SHADER);
+	GLuint frag = CreateShader(PhongFragmentShaderSource, GL_FRAGMENT_SHADER);
 
-	ShaderProgram = glCreateProgram();
+	PhongShaderProgram = glCreateProgram();
 	//utils->CheckErrors("glCreateProgram()");
 
-	glAttachShader(ShaderProgram, vert);
-	glAttachShader(ShaderProgram, frag);
+	glAttachShader(PhongShaderProgram, vert);
+	glAttachShader(PhongShaderProgram, frag);
 
 	GLint status = 0;
 
-	glLinkProgram(ShaderProgram);
-	DebugShaderProgram(status);
+	glLinkProgram(PhongShaderProgram);
+	DebugShaderProgram(status, PhongShaderProgram);
 
-		uniModel = glGetUniformLocation(ShaderProgram, "modelMatrix");	
+		uniModel = glGetUniformLocation(PhongShaderProgram, "modelMatrix");	
 		//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
-		uniView = glGetUniformLocation(ShaderProgram, "viewMatrix");
+		uniView = glGetUniformLocation(PhongShaderProgram, "viewMatrix");
 		//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
-		uniProj = glGetUniformLocation(ShaderProgram, "projMatrix");
+		uniProj = glGetUniformLocation(PhongShaderProgram, "projMatrix");
 		//utils->CheckErrors("glGetUniformLocation(projMatrix)");
+	
+		uniNormal = glGetUniformLocation(PhongShaderProgram, "normal");
 
-		uniColor = glGetUniformLocation(ShaderProgram, "overrideColor");
+		uniColor = glGetUniformLocation(PhongShaderProgram, "overrideColor");
 		//utils->CheckErrors("glGetUniformLocation(overrideColor)");
-
-	return ShaderProgram;
+		
+/*		
+	"uniform vec4 lightPosition;\n"
+	"uniform vec4 kAmbient;\n"
+	"uniform vec4 kDiffuse;\n"
+	"uniform vec4 kSpecular;\n"
+	"uniform float nSpecularPow;\n"
+	"uniform vec4 diffuseColor;\n"
+*/
+	return PhongShaderProgram;
 }
 
 void SHADER_PROGRAM::BuildShaders()
 {
-	Shaderprograms[0] = InitGenericShaders();
-	Shaderprograms[1] = InitPhongShaders();
+	InitGenericShaders();
+	//InitPhongShaders();
 }

@@ -90,6 +90,30 @@ void OBJECTS::GenCube(const float Width, const float Height, const float Depth, 
 }
 
 template <size_t N>
+void OBJECTS::GenLightCube(const float Width, const float Height, const float Depth, float (&NewCube)[N])
+{
+	int j = 0;
+	while(j < N)	
+	{
+		NewCube[j] = BaseCubeVertices[j] * Width;
+		j++;
+		NewCube[j] = BaseCubeVertices[j] * Height;
+		j++;
+		NewCube[j] = BaseCubeVertices[j] * Depth;
+		j++;
+		NewCube[j] = 1.0f;
+		j++;
+		NewCube[j] = 0.5f;
+		j++;
+		NewCube[j] = 0.5f;
+		j++;
+		NewCube[j] = 0.5f;
+		j++;
+	}
+	std::cout << "[DEBUG] Light Cube Sides: " << j << std::endl;
+}
+
+template <size_t N>
 void OBJECTS::GenCylinder(const float Radius, const float Height, const int Resolution, float (&Cylinder)[N])
 {
 	int j = 0;
@@ -451,9 +475,26 @@ void OBJECTS::AddObjectToVAO(const int vao, const float (&ObjectVectices)[N])
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)( 3*sizeof(float)));
 }
 
+template <size_t N>
+void OBJECTS::AddObjectLightToVAO(const int vao, const float (&ObjectVectices)[N])
+{
+	glBindVertexArray(VAOArray[vao]);	
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ObjectVectices), ObjectVectices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);	
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(4*sizeof(float)));
+}
+
 void OBJECTS::BuildObjects()
 {
-	glGenVertexArrays(10, VAOArray);
+	glGenVertexArrays(11, VAOArray);
 
 	float Beams[216];
 	GenCube(4.0f, 2.0f, 48.0f, Beams);
@@ -488,6 +529,9 @@ void OBJECTS::BuildObjects()
 	float LegSupport[180];
 	GenCylinder(4.0f, 48.0f, 6.0f, LegSupport);
 
+	float TestCube[294];
+	GenLightCube(16.0f, 16.0f, 16.0f, TestCube);
+
 
 
 	AddObjectToVAO(0, Beams);
@@ -514,6 +558,8 @@ void OBJECTS::BuildObjects()
 
 	// Leg Support
 	AddObjectToVAO(9, LegSupport);
+
+	AddObjectLightToVAO(10, TestCube);
 }
 
 
@@ -526,6 +572,11 @@ void OBJECTS::BindObject(const int vao)
 void OBJECTS::DrawCube()
 {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void OBJECTS::DrawLightCube()
+{
+	glDrawArrays(GL_TRIANGLES, 0, 42);
 }
 
 
