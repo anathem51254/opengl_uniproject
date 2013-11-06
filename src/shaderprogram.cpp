@@ -37,6 +37,33 @@ const 	std::string GenericFragmentShaderSource(
 	"}\n"
 );
 
+const 	std::string TextureGenericVertexShaderSource(
+	"#version 430\n"
+	"layout(location = 0) in vec4 position;\n"
+	"layout(location = 1) in vec3 normal;\n"
+	"layout(location = 2) in vec3 color;\n"
+	"layout(location = 3) in vec2 texturecoords;\n"	
+	"out vec3 Color;\n"
+	"uniform mat4 modelMatrix;\n"
+	"uniform mat4 viewMatrix;\n"
+	"uniform mat4 projMatrix;\n"
+	"uniform mat4 normalMatrix;\n"
+	"uniform vec3 overrideColor;\n"
+	"void main() {\n"
+		"Color = overrideColor * color;\n"
+		"gl_Position = projMatrix * viewMatrix * modelMatrix * position;\n"
+	"}\n"
+);	
+
+const 	std::string TextureGenericFragmentShaderSource(
+	"#version 430\n"
+	"in vec3 Color;\n"
+	"out vec4 outColor;\n"
+	"void main() {\n"
+		"outColor = vec4( Color, 1.0 );\n"
+	"}\n"
+);
+
 /* From super bible - doesnt compile
 const	std::string PhongVectexShaderSource(
 	"#version 430\n"
@@ -61,7 +88,7 @@ const	std::string PhongVectexShaderSource(
 );
 */
 
-const	std::string PhongVectexShaderSource(
+const	std::string PhongVertexShaderSource(
 	"#version 430\n"
 	"layout (location = 0) in vec3 position;\n"
 	"layout (location = 1) in vec3 normal;\n"
@@ -140,6 +167,7 @@ SHADER_PROGRAM::~SHADER_PROGRAM()
 {
 	glDeleteProgram(Shaderprograms[0]);
 	glDeleteProgram(Shaderprograms[1]);
+	glDeleteProgram(Shaderprograms[2]);
 
 	/*for(unsigned int i = 0; i < ShaderNumber; i++)
 	{
@@ -170,6 +198,14 @@ int SHADER_PROGRAM::DebugShaderProgram(GLint status, GLuint ShaderProg)
 	std::cout << "[DEBUG] Linking Program [OK]\n" << std::endl;
 
 	return 0;
+}
+
+void SHADER_PROGRAM::UpdateTextureGenericShaderUniforms(const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj, const glm::mat4 normal)
+{
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(uniNormal, 1, GL_FALSE, glm::value_ptr(normal));
 }
 
 void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 normal)
@@ -204,6 +240,18 @@ void SHADER_PROGRAM::ChangeUniformColor(float r, float g, float b)
 void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP, const GLuint shader)
 {
 	glUseProgram(GenericShaderProgram);
+	//glUseProgram(PhongShaderProgram);
+
+	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
+	
+}
+
+void SHADER_PROGRAM::UseShaderProgram(const GLuint shader)
+{
+	//glUseProgram(GenericShaderProgram);
+	glUseProgram(TextureGenericShaderProgram);
 	//glUseProgram(PhongShaderProgram);
 
 	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
@@ -278,7 +326,7 @@ void SHADER_PROGRAM::InitGenericShaders()
 
 GLuint SHADER_PROGRAM::InitPhongShaders()
 {
-	GLuint vert = CreateShader(PhongVectexShaderSource, GL_VERTEX_SHADER);
+	GLuint vert = CreateShader(PhongVertexShaderSource, GL_VERTEX_SHADER);
 	GLuint frag = CreateShader(PhongFragmentShaderSource, GL_FRAGMENT_SHADER);
 
 	PhongShaderProgram = glCreateProgram();
@@ -292,17 +340,17 @@ GLuint SHADER_PROGRAM::InitPhongShaders()
 	glLinkProgram(PhongShaderProgram);
 	DebugShaderProgram(status, PhongShaderProgram);
 
-		uniModel = glGetUniformLocation(PhongShaderProgram, "modelMatrix");	
-		//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
-		uniView = glGetUniformLocation(PhongShaderProgram, "viewMatrix");
-		//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
-		uniProj = glGetUniformLocation(PhongShaderProgram, "projMatrix");
-		//utils->CheckErrors("glGetUniformLocation(projMatrix)");
-	
-		uniNormal = glGetUniformLocation(PhongShaderProgram, "normal");
+	uniModel = glGetUniformLocation(PhongShaderProgram, "modelMatrix");	
+	//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
+	uniView = glGetUniformLocation(PhongShaderProgram, "viewMatrix");
+	//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
+	uniProj = glGetUniformLocation(PhongShaderProgram, "projMatrix");
+	//utils->CheckErrors("glGetUniformLocation(projMatrix)");
 
-		uniColor = glGetUniformLocation(PhongShaderProgram, "overrideColor");
-		//utils->CheckErrors("glGetUniformLocation(overrideColor)");
+	uniNormal = glGetUniformLocation(PhongShaderProgram, "normal");
+
+	uniColor = glGetUniformLocation(PhongShaderProgram, "overrideColor");
+	//utils->CheckErrors("glGetUniformLocation(overrideColor)");
 		
 /*		
 	"uniform vec4 lightPosition;\n"
@@ -315,8 +363,39 @@ GLuint SHADER_PROGRAM::InitPhongShaders()
 	return PhongShaderProgram;
 }
 
+GLuint SHADER_PROGRAM::InitTextureGenericShaders()
+{
+	GLuint vert = CreateShader(TextureGenericVertexShaderSource, GL_VERTEX_SHADER);
+	GLuint frag = CreateShader(TextureGenericFragmentShaderSource, GL_FRAGMENT_SHADER);
+
+	TextureGenericShaderProgram = glCreateProgram();
+
+	glAttachShader(TextureGenericShaderProgram, vert);
+	glAttachShader(TextureGenericShaderProgram, frag);
+
+	GLint status = 0;
+
+	glLinkProgram(TextureGenericShaderProgram);
+	DebugShaderProgram(status, TextureGenericShaderProgram);
+
+	uniModel = glGetUniformLocation(TextureGenericShaderProgram, "modelMatrix");	
+	//utils->CheckErrors("glGetUniformLocation(modelMatrix)");
+	uniView = glGetUniformLocation(TextureGenericShaderProgram, "viewMatrix");
+	//utils->CheckErrors("glGetUniformLocation(viewMatrix)");
+	uniProj = glGetUniformLocation(TextureGenericShaderProgram, "projMatrix");
+	//utils->CheckErrors("glGetUniformLocation(projMatrix)");
+
+	uniNormal = glGetUniformLocation(TextureGenericShaderProgram, "normal");
+
+	uniColor = glGetUniformLocation(TextureGenericShaderProgram, "overrideColor");
+	//utils->CheckErrors("glGetUniformLocation(overrideColor)");
+	
+	return TextureGenericShaderProgram;
+}
+
 void SHADER_PROGRAM::BuildShaders()
 {
-	InitGenericShaders();
+	//InitGenericShaders();
+	InitTextureGenericShaders();
 	//InitPhongShaders();
 }

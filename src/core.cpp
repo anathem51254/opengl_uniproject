@@ -1330,6 +1330,20 @@ void CORE::DrawCube()
 	MatrixStack.pop();
 }
 
+// TEST
+void CORE::DrawNormalCube()
+{
+	objects->BindObject(11);
+
+	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
+
+	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
+		TranslateModelMatrix(glm::vec3(0.0, 0.0f, -10.0f));
+		generic_shader->UpdateTextureGenericShaderUniforms();
+		objects->DrawLightCube();
+	MatrixStack.pop();
+}
+
 void CORE::DrawHalfCylinder()
 {
 	objects->BindObject(4);
@@ -1425,13 +1439,15 @@ void CORE::DrawRectangle_ONE()
 void CORE::DisplayScene(const float _Interpolation)
 {
 	//generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP + _Interpolation);	
-	generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP, 0);	
+	//generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP, 0);	
+	generic_shader->UseShaderProgram(0);	
 
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
 
 		if(Scene == TEST)
 		{
-			DrawCube();
+			//DrawCube();
+			DrawNormalCube();
 			//DrawCylinder();
 			//DrawHalfCylinder();
 			//DrawCone();
@@ -1581,7 +1597,7 @@ void CORE::CleanUp()
 int CORE::MainLoop()
 {
 
-	Scene = BRIDGE;
+	Scene = TEST;
 
 	sdl_context->CenterMouse(SDLWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
 	camera->FaceCameraFront();

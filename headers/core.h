@@ -141,6 +141,8 @@ class CORE
 		void 	DrawCircle();
 		void	DrawRectangle_ONE();
 
+		void	DrawNormalCube();
+
 		void	DisplayScene(const float);
 		
 		void  	CleanUp();

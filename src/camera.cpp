@@ -106,6 +106,7 @@ void CAMERA::UpdateDefaultCamera()
 void CAMERA::UpdateMVP()
 {
 	DefaultCameraMatrix.IdentityMatrix 	= glm::mat4(1.0f);
+
 	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix * DefaultCameraMatrix.ViewMatrix * DefaultCameraMatrix.IdentityMatrix;
 
 	DefaultCameraMatrix.Normal		= glm::inverse(glm::transpose((DefaultCameraMatrix.IdentityMatrix * DefaultCameraMatrix.ViewMatrix)));
