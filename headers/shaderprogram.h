@@ -34,13 +34,15 @@ class SHADER_PROGRAM
 
 
 		void 	InitGenericShaders();
+		GLuint 	InitTextureGenericShaders();
 		GLuint	InitPhongShaders();
 
+		void	UseShaderProgram(const GLuint shader);
 		void	UseShaderProgram(const glm::mat4 MVP, const GLuint shader);
 
 		void	UpdateUniformModel(const glm::mat4 MVP);
 		void	UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 Normal);
-		void	UpdateTextureGenericShaderUniform(const glm::mat4 model, const glm::mat4 view, const glm::mat4 view, const glm::mat4 proj, const glm::mat4 Normal);
+		void	UpdateTextureGenericShaderUniform(const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj, const glm::mat4 Normal);
 
 		void	ChangeUniformColor(float r, float g, float b);
 
@@ -52,6 +54,7 @@ class SHADER_PROGRAM
 
 		GLuint		GenericShaderProgram;
 		GLuint		PhongShaderProgram;
+		GLuint		TextureGenericShaderProgram;
 
 		int		DebugShaderProgram(GLint status, GLuint ShaderProg);
 

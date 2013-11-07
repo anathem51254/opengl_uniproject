@@ -39,10 +39,10 @@ const 	std::string GenericFragmentShaderSource(
 
 const 	std::string TextureGenericVertexShaderSource(
 	"#version 430\n"
-	"layout(location = 0) in vec4 position;\n"
-	"layout(location = 1) in vec3 normal;\n"
-	"layout(location = 2) in vec3 color;\n"
-	"layout(location = 3) in vec2 texturecoords;\n"	
+	//"layout(location = 0) in vec4 position;\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec3 color;\n"
+	//"layout(location = 2) in vec2 texturecoords;\n"	
 	"out vec3 Color;\n"
 	"uniform mat4 modelMatrix;\n"
 	"uniform mat4 viewMatrix;\n"
@@ -51,7 +51,7 @@ const 	std::string TextureGenericVertexShaderSource(
 	"uniform vec3 overrideColor;\n"
 	"void main() {\n"
 		"Color = overrideColor * color;\n"
-		"gl_Position = projMatrix * viewMatrix * modelMatrix * position;\n"
+		"gl_Position = (projMatrix * viewMatrix * modelMatrix) * vec4(position, 1.0f);\n"
 	"}\n"
 );	
 
@@ -200,7 +200,7 @@ int SHADER_PROGRAM::DebugShaderProgram(GLint status, GLuint ShaderProg)
 	return 0;
 }
 
-void SHADER_PROGRAM::UpdateTextureGenericShaderUniforms(const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj, const glm::mat4 normal)
+void SHADER_PROGRAM::UpdateTextureGenericShaderUniform(const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj, const glm::mat4 normal)
 {
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
@@ -210,8 +210,6 @@ void SHADER_PROGRAM::UpdateTextureGenericShaderUniforms(const glm::mat4 model, c
 
 void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 normal)
 {
-	//glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
-	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, &MVP[0][0]);
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, &MVP[1][1]);
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, &MVP[2][2]);
@@ -220,7 +218,6 @@ void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP, const glm::mat4 nor
 
 void SHADER_PROGRAM::UpdateUniformModel(const glm::mat4 MVP)
 {
-	//glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(temp_modelMatrix));
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
 }
 
@@ -237,27 +234,18 @@ void SHADER_PROGRAM::ChangeUniformColor(float r, float g, float b)
 	glUniform3f(uniColor, r, g, b);
 }
 
-void SHADER_PROGRAM::UseShaderProgram(const glm::mat4 MVP, const GLuint shader)
-{
-	glUseProgram(GenericShaderProgram);
-	//glUseProgram(PhongShaderProgram);
-
-	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
-	
-}
-
 void SHADER_PROGRAM::UseShaderProgram(const GLuint shader)
 {
-	//glUseProgram(GenericShaderProgram);
-	glUseProgram(TextureGenericShaderProgram);
-	//glUseProgram(PhongShaderProgram);
-
-	//glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	//glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-	//glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
-	
+	switch(shader)
+	{
+		case 0:
+			glUseProgram(GenericShaderProgram);
+			break;
+		case 1:
+			glUseProgram(TextureGenericShaderProgram);
+			break;
+		//glUseProgram(PhongShaderProgram);
+	}
 }
 
 GLuint SHADER_PROGRAM::CreateShader( const std::string &shaderSource, GLenum eShaderType )

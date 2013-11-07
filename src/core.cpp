@@ -1324,9 +1324,14 @@ void CORE::DrawCube()
 	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
 
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(0.0, 0.0f, -10.0f));
-		generic_shader->UpdateUniformModel(MatrixStack.top(), camera->DefaultCameraMatrix.Normal);
-		objects->DrawLightCube();
+		//TranslateModelMatrix(glm::vec3(0.0, 0.0f, -10.0f));
+		//generic_shader->UpdateUniformModel(MatrixStack.top());
+		
+		glm::mat4 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
+		generic_shader->UpdateTextureGenericShaderUniform(model, camera->DefaultCameraMatrix.ViewMatrix, camera->DefaultCameraMatrix.ProjectionMatrix, camera->DefaultCameraMatrix.Normal);
+
+		//generic_shader->UpdateUniformModel(MatrixStack.top(), camera->DefaultCameraMatrix.Normal);
+		objects->DrawCube();
 	MatrixStack.pop();
 }
 
@@ -1337,10 +1342,13 @@ void CORE::DrawNormalCube()
 
 	generic_shader->ChangeUniformColor(61.0f, 245.0f, 0.0f);	
 
+	TranslateModelMatrix(glm::vec3(0.0, 0.0f, 0.0f));
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
-		TranslateModelMatrix(glm::vec3(0.0, 0.0f, -10.0f));
-		generic_shader->UpdateTextureGenericShaderUniforms();
-		objects->DrawLightCube();
+		TranslateModelMatrix(glm::vec3(0.0, 0.0f, 0.0f));
+		//glm::mat4 model = glm::translate(model, glm::vec3(0.0f, -20.0f, 0.0f));
+		//generic_shader->UpdateTextureGenericShaderUniform(model, camera->DefaultCameraMatrix.ViewMatrix, camera->DefaultCameraMatrix.ProjectionMatrix, camera->DefaultCameraMatrix.Normal);
+		generic_shader->UpdateUniformModel(MatrixStack.top(), camera->DefaultCameraMatrix.Normal);
+		objects->DrawCube();
 	MatrixStack.pop();
 }
 
@@ -1438,16 +1446,14 @@ void CORE::DrawRectangle_ONE()
 
 void CORE::DisplayScene(const float _Interpolation)
 {
-	//generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP + _Interpolation);	
-	//generic_shader->UseShaderProgram(camera->DefaultCameraMatrix.MVP, 0);	
 	generic_shader->UseShaderProgram(0);	
 
 	MatrixStack.push(camera->DefaultCameraMatrix.MVP);
 
 		if(Scene == TEST)
 		{
-			//DrawCube();
-			DrawNormalCube();
+			DrawCube();
+			//DrawNormalCube();
 			//DrawCylinder();
 			//DrawHalfCylinder();
 			//DrawCone();

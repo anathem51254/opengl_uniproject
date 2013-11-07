@@ -46,7 +46,7 @@ const float BaseCubeVertices[] = {
 	-1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, //0.0f, 1.0f
 
 };
-
+/*
 const float TextureBaseCubeVertices[] = { 
 //	 X	Y     Z      N 	   R     G     B     U     V	
 	-1.0f, -1.0f, -1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
@@ -92,6 +92,52 @@ const float TextureBaseCubeVertices[] = {
 	-1.0f,  1.0f, -1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f
 
 };
+*/
+const float TextureBaseCubeVertices[] = { 
+//	 X	Y     Z      N 	   R     G     B     U     V	
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	 1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	 1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	 1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	-1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+
+	-1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	 1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	-1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	-1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+
+	-1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	-1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	-1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	-1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	 1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	 1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	 1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	 1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	 1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	-1.0f, -1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	-1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+
+	-1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	 1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	 1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	-1.0f,  1.0f,  1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	-1.0f,  1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f
+
+};
 
 const float BaseSquareVectices[] = {
 
@@ -114,6 +160,15 @@ OBJECTS::~OBJECTS()
 	glDeleteVertexArrays(5, VAOArray);
 }
 
+std::string OBJECTS::FloatToString(const float f)
+{
+	std::ostringstream buffer;
+	
+	buffer << f;
+
+	return buffer.str();
+}
+
 template <size_t N>
 void OBJECTS::GenCube(const float Width, const float Height, const float Depth, float (&NewCube)[N])
 {
@@ -133,21 +188,63 @@ void OBJECTS::GenCube(const float Width, const float Height, const float Depth, 
 		NewCube[j] = 0.5f;
 		j++;
 	}
+	std::cout << "[DEBUG] Cube Sides: " << j << std::endl;
 }
 
 template <size_t N>
 void OBJECTS::GenTextureCube(const float Width, const float Height, const float Depth, float (&NewCube)[N])
 {
 	int j = 0;
-	while(j < N)	
+	while(j < N-1)	
 	{
-		NewCube[j] = BaseCubeVertices[j] * Width;
+		NewCube[j] = TextureBaseCubeVertices[j] * Width;
 		j++;
-		NewCube[j] = BaseCubeVertices[j] * Height;
+		NewCube[j] = TextureBaseCubeVertices[j] * Height;
 		j++;
-		NewCube[j] = BaseCubeVertices[j] * Depth;
-		j += 6;
+		NewCube[j] = TextureBaseCubeVertices[j] * Depth;
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j]; 
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j];
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j];
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j];
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j];
+		j++;
+		NewCube[j] = TextureBaseCubeVertices[j];
+		j++;
 	}
+/*
+	int i = 0;
+	while(i < N)
+	{
+		std::string str = "";
+
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+		str += FloatToString(NewCube[i]) + " ";
+		i++;
+
+		std::cout << "[DEBUG] Triangle " << (i/54) << " " << str << std::endl;
+	}
+	*/
+	std::cout << "[DEBUG] Texture Sides: " << j << std::endl;
 }
 
 template <size_t N>
@@ -564,12 +661,10 @@ void OBJECTS::AddTextureObjectToVAO(const int vao, const float (&ObjectVectices)
 	glEnableVertexAttribArray(0);	
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*sizeof(float), 0);
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(3*sizeof(float)));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(4*sizeof(float)));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(7*sizeof(float)));
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 9*sizeof(float), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(4*sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*sizeof(float), (void*)(7*sizeof(float)));
 }
 
 void OBJECTS::BuildObjects()
@@ -609,12 +704,11 @@ void OBJECTS::BuildObjects()
 	float LegSupport[180];
 	GenCylinder(4.0f, 48.0f, 6.0f, LegSupport);
 
-	float TestCube[294];
-	GenLightCube(16.0f, 16.0f, 16.0f, TestCube);
+	float TestCube[216];
+	GenCube(16.0f, 16.0f, 16.0f, TestCube);
 
-	float TextureTestCube[306];
+	float TextureTestCube[324];
 	GenTextureCube(16.0f, 16.0f, 16.0f, TextureTestCube);
-
 
 
 	AddObjectToVAO(0, Beams);
@@ -642,9 +736,9 @@ void OBJECTS::BuildObjects()
 	// Leg Support
 	AddObjectToVAO(9, LegSupport);
 
-	AddObjectLightToVAO(10, TestCube);
+	AddObjectToVAO(10, TestCube);
 
-	AddObjectLightToVAO(11, TextureTestCube);
+	AddTextureObjectToVAO(11, TextureTestCube);
 }
 
 

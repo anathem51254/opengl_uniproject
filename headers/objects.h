@@ -70,6 +70,8 @@ class OBJECTS
 		void DrawSquare();
 
 	private:
+
+		std::string FloatToString(const float f);
 		
 		GLuint vbo;
 
@@ -80,6 +82,9 @@ class OBJECTS
 
 		template <size_t N>
 		void AddObjectLightToVAO(const int vao, const float (&ObjectVectices)[N]);
+
+		template <size_t N>
+		void AddTextureObjectToVAO(const int vao, const float (&ObjectVectices)[N]);
 
 		template <size_t N>
 		void GenCylinder(const float Radius, const float Height, const int Resolution, float (&Cylinder)[N]);
@@ -98,6 +103,10 @@ class OBJECTS
 
 		template <size_t N>
 		void GenLightCube(const float Width, const float Height, const float Depth, float (&Cube)[N]);
+
+		template <size_t N>
+		void GenTextureCube(const float Width, const float Height, const float Depth, float (&Cube)[N]);
+
 };
 
 #endif

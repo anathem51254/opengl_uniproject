@@ -95,6 +95,20 @@ void CAMERA::ComputeVectors()
 	UpVector = glm::cross(RightVector, DirectionVector);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void CAMERA::UpdateDefaultCamera()
 {
 	DefaultCameraMatrix.ProjectionMatrix 	= glm::perspective(FOV, AspectRatio, NearPlane, FarPlane);
@@ -107,9 +121,9 @@ void CAMERA::UpdateMVP()
 {
 	DefaultCameraMatrix.IdentityMatrix 	= glm::mat4(1.0f);
 
-	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix * DefaultCameraMatrix.ViewMatrix * DefaultCameraMatrix.IdentityMatrix;
+	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix                                                              * DefaultCameraMatrix.ViewMatrix                                                                    * DefaultCameraMatrix.IdentityMatrix;
 
-	DefaultCameraMatrix.Normal		= glm::inverse(glm::transpose((DefaultCameraMatrix.IdentityMatrix * DefaultCameraMatrix.ViewMatrix)));
+	DefaultCameraMatrix.Normal		= glm::inverse(                                                                                       glm::transpose((                                                                                                    DefaultCameraMatrix.IdentityMatrix                                                                * DefaultCameraMatrix.ViewMatrix                                                                     )));
 }
 
 void CAMERA::SetDefaultCamera()
@@ -126,6 +140,21 @@ void CAMERA::SetDefaultCamera()
 
 	DefaultCameraMatrix.MVP			= DefaultCameraMatrix.ProjectionMatrix * DefaultCameraMatrix.ViewMatrix * DefaultCameraMatrix.IdentityMatrix;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
